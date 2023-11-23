@@ -1,5 +1,82 @@
+import { useState } from 'react';
+import axios from 'axios';
+import { FcGoogle } from 'react-icons/fc'
+import Navbar from '../components/navbar';
+
 export default function Signup(){
+
+    const handleSubmit = () => {
+
+    }
+
     return(
-        <div></div>
+        <div>
+            <Navbar/>
+            <div className="sign-up-form-container">
+                <div className='sign-up-form'>
+                    {/* <h2><img src='/logo.png' width={28} /> PipeGen AI</h2> */}
+                </div>
+                <form className="sign-up-form" onSubmit={handleSubmit}>
+                    <div className="form-row">
+                        <div className="form-group">
+                            <label htmlFor="firstName">First Name</label>
+                            <input
+                                className='input-field'
+                                type="text"
+                                id="firstName"
+                                name="firstName"
+                                placeholder="First name"
+                                required
+                            />
+                        </div>
+                        <div className="form-group" style={{ marginLeft: 10 }}>
+                            <label htmlFor="lastName">Last Name</label>
+                            <input
+                                className='input-field'
+                                type="text"
+                                id="lastName"
+                                name="lastName"
+                                placeholder="Last name"
+                                required
+                            />
+                        </div>
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="email">Email</label>
+                        <input
+                            className='input-field'
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="Enter your email"
+                            required
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="password">Password</label>
+                        <input
+                            className='input-field'
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Enter your password"
+                            required
+                        />
+                    </div>
+                    <button className="btn-submit bg-blue-500 hover:bg-blue-700 transition ease-in-out duration-300 mt-3" type="submit">
+                        Signup
+                    </button>
+                    <p className="text-sm font-semibold text-center m-4">
+                        <span className="border-b w-full text-center border-gray-300 py-1">
+                            Or
+                        </span>
+                    </p>
+                </form>
+                <button className="h-12 bg-white border-slate-500 border-2 text-black font-bold py-3 px-10 rounded inline-flex items-center">
+                        <FcGoogle size={40}/>
+                        <span className="ml-4">Continue with Google</span>
+                    </button>
+            </div>
+        </div>
     )
 }
