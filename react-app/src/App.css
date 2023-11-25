@@ -114,13 +114,13 @@ header {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  height: 100vh;
+  height: 70vh;
 }
 
 .sign-up-form {
   width: 100%;
   max-width: 350px;
-  padding: 10px;
+  padding: 0px;
 }
 
 .login-form-container {

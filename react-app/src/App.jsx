@@ -5,6 +5,7 @@ import Dashboard from './pages/dashboard';
 import Login from './pages/login';
 import Signup from './pages/signup';
 import React from "react";
+import Profile from './pages/profile';
 
 function App() {
 
@@ -14,6 +15,7 @@ function App() {
         <Routes>
             <Route path="/" element={<Home />}/>
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/profile" element={<Profile/>}/>
             <Route path="/login" element={<Login/>}/>
             <Route path="/signup" element={<Signup/>}/>
         </Routes>
