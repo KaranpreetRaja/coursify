@@ -185,3 +185,8 @@ label {
   margin: auto;
   padding: 20px 0;
 }
+
+.popup-content {
+  border-radius: 12px;
+  padding: 0;
+}

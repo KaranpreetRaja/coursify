@@ -19,7 +19,7 @@ export default function Sidebar() {
                 </div>
                 <div className="flex flex-row items-center text-black space-x-2">
                     <FaPeopleGroup />
-                    <span>Shared With Me</span>
+                    <span>Browse</span>
                 </div>
             </div>
         </div>

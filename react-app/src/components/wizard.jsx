@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
 import { FaPlus } from "react-icons/fa";
+import File_Upload from "./file_upload";
+import Topic_Selection from "./topic_selection";
+import Course_Info from "./course_info";
 
 export default function Wizard() {
 
@@ -19,35 +22,29 @@ export default function Wizard() {
       closeOnDocumentClick={false}
     >
       {(close) => (
-        <div className="bg-white pb-6 px-6 h-wizard rounded-t-lg flex flex-col justify-between">
-          <div className="flex justify-center items-center w-full mb-4 bg-gray-200 rounded-t-lg">
-            <h1 className="text-xl font-medium">Create a Course</h1>
-          </div>
-            <div className="flex justify-between w-full rounded-t-lg">
-            <button
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300"
-              >
-                Back
+        <div className="bg-white h-wizard rounded-t-lg flex flex-col justify-between">
+          <div className="w-full flex flex-row justify-between">
+              <h1 className="text-blue-900 text-xl font-semibold mt-2 ml-4">Course Creation</h1>
+              <button onClick={close} class="border-2 border-blue-600 bg-white w-10 h-10 rounded-lg relative z-10 transition-all duration-200 ease-in cursor-pointer text-3xl hover:bg-blue-600 hover:text-white">
+                X
               </button>
+          </div>
+          
+          <Course_Info/>
+          {/* <File_Upload/> */}
+          {/* <Topic_Selection/> */}
+          
+          <div className="flex justify-between w-full rounded-t-lg px-4 pb-4">
+            <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300">
+              Back
+            </button>
 
-              <div className="flex flex-row space-x-4">
-                <button
-                  className="bg-blue-400 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300"
-                  onClick={() => {
-                    close();
-                  }}
-                >
-                  Cancel
-                </button>
-                <button
-                  className="bg-blue-800 text-white px-4 py-2 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring focus:border-blue-300"
-        
-                >
-                  Next
-                </button>
-                
-              </div>
-            </div>
+            <button
+              className="bg-blue-800 text-white px-6 py-2 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring focus:border-blue-300">
+              Next
+            </button>
+          </div>
+
         </div>
       )}
     </Popup>
