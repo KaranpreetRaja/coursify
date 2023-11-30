@@ -6,6 +6,7 @@ import Login from './pages/login';
 import Signup from './pages/signup';
 import React from "react";
 import Profile from './pages/profile';
+import Course from './pages/course';
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
             <Route path="/profile" element={<Profile/>}/>
             <Route path="/login" element={<Login/>}/>
             <Route path="/signup" element={<Signup/>}/>
+            <Route path="/dashboard/course" element={<Course/>}/>
         </Routes>
       </BrowserRouter>
     </>
