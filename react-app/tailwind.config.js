@@ -8,6 +8,9 @@ export default {
     extend: {
       height: {
         'wizard': '700px'
+      },
+      width: {
+        'topic': '900px'
       }
     },
   },

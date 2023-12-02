@@ -1,8 +1,38 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlineArrowUp } from "react-icons/ai";
 import File from "./file";
 
 export default function File_Upload({ visibility }){
+    const [blobs, setBlobs] = useState([])
+    const [files, setFiles] = useState([])
+
+    const fileToBlob = async (file) => {
+      const arrayBuffer = await file.arrayBuffer();
+      const textDecoder = new TextDecoder('utf-8');
+      const blob = textDecoder.decode(arrayBuffer);
+      return blob;
+    };
+
+    const handleFileUpload = async (e) => {
+      const selectedFiles = e.target.files;
+  
+      const blobContents = await Promise.all(
+        Array.from(selectedFiles).map(async (file) => {
+          const blob = await fileToBlob(file);
+          return blob;
+        })
+      );
+      
+      setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
+      setBlobs((prevBlobs) => [...prevBlobs, ...blobContents]);
+    };
+
+    useEffect(() => {
+      console.log(blobs)
+      console.log(files)
+    }, [blobs])
+  
+
     return(
       <div className={visibility ? '' : 'hidden'}>
         <div className="font-sans text-sm bg-white h-3/4 p-8 rounded-lg w-full my-auto ">
@@ -16,7 +46,7 @@ export default function File_Upload({ visibility }){
                     type="file"
                     accept=".pdf"
                     multiple
-                    // onChange={handleFileUpload}
+                    onChange={handleFileUpload}
                     className="hidden"
                     />
                 </label>
