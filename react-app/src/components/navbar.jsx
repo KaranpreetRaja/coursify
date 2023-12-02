@@ -3,12 +3,15 @@ import { Link } from "react-router-dom";
 import { GiSpellBook } from "react-icons/gi";
 import { FaUser } from "react-icons/fa";
 import Avatar from 'react-avatar';
+import { useNavigate } from 'react-router-dom';
 
 export default function Navbar() {
     const [isLoggedIn, setLoggedIn] = useState(true);
+    const navigate = useNavigate()
 
     const handleLogout = () => {
         setLoggedIn(false);
+        navigate("/");
     };
 
     const userInitials = "AY"
@@ -36,7 +39,7 @@ export default function Navbar() {
                             color="#87CEEB"
                         />
 
-                        <Link to="/" className="btn-signup hover:bg-blue-700 transition ease-in-out duration-300">Log out</Link>
+                        <button onClick={handleLogout} className="btn-signup hover:bg-blue-700 transition ease-in-out duration-300">Log out</button>
                     </div>
                 )}
                 {!isLoggedIn && (

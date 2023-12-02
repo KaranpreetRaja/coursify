@@ -1,12 +1,38 @@
-import { useState } from 'react';
 import axios from 'axios';
 import { FcGoogle } from 'react-icons/fc'
 import Navbar from '../components/navbar';
+import { useNavigate } from 'react-router-dom';
 
 export default function Signup(){
+    const navigate = useNavigate()
 
-    const handleSubmit = () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
+        const email = e.target.elements.email.value;
+        const password = e.target.elements.password.value;
+        const firstName = e.target.elements.firstName.value;
+        const lastName = e.target.elements.lastName.value;
+        const fullName = `${firstName} ${lastName}`
+
+        console.log(email);
+        console.log(password);
+        console.log(firstName);
+        console.log(lastName);
+
+        try {
+            const response = await axios.post('/register', {
+                email,
+                password,
+                fullName
+            });
+
+            const uid = response.data.uid;
+            console.log('Register successful! UID:', uid);
+            navigate(`/dashboard/${uid}`);
+        } catch (error) {
+            console.error('Register failed:', error.message);
+        }
     }
 
     return(

@@ -1,12 +1,33 @@
-import { useState } from 'react';
 import axios from 'axios';
 import { FcGoogle } from 'react-icons/fc'
 import Navbar from '../components/navbar';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login(){
+    const navigate = useNavigate()
 
-    const handleSubmit = () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
+        const email = e.target.elements.email.value;
+        const password = e.target.elements.password.value;
+
+        console.log(email);
+        console.log(password);
+        
+
+        try {
+            const response = await axios.post('/login', {
+                email,
+                password
+            });
+
+            const uid = response.data.uid;
+            console.log('Login successful! UID:', uid);
+            navigate(`/dashboard/${uid}`);
+        } catch (error) {
+            console.error('Login failed:', error.message);
+        }
     }
 
 

@@ -2,9 +2,10 @@ import { useState } from "react";
 import { AiOutlineArrowUp } from "react-icons/ai";
 import File from "./file";
 
-export default function File_Upload(){
+export default function File_Upload({ visibility }){
     return(
-        <div className="font-sans text-sm bg-white h-3/4 p-8 rounded-lg w-full my-auto">
+      <div className={visibility ? '' : 'hidden'}>
+        <div className="font-sans text-sm bg-white h-3/4 p-8 rounded-lg w-full my-auto ">
             <div className="flex justify-between items-center mb-4">
                 <h1 className="text-3xl font-semibold">Upload Documents</h1>
 
@@ -21,7 +22,7 @@ export default function File_Upload(){
                 </label>
             </div>
 
-            <div className="w-full overflow-y-scroll h-3/4 mt-11 space-y-4 ml-2">
+            <div className="w-full overflow-y-scroll h-96 mt-11 space-y-4 ml-2">
               <File
                 FileName="Dog Stories"
                 Size={`${3311} Bytes`}
@@ -60,5 +61,6 @@ export default function File_Upload(){
               />
           </div>
         </div>
+      </div>
     )
 }
