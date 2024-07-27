@@ -14,6 +14,16 @@ function App() {
 
   return (
     <>
+      <BrowserRouter>
+        <Routes>
+            <Route path="/" element={<Home />}/>
+            <Route path="/dashboard/:uid" element={<Dashboard />} />
+            <Route path="/profile" element={<Profile/>}/>
+            <Route path="/login" element={<Login/>}/>
+            <Route path="/signup" element={<Signup/>}/>
+            <Route path="/dashboard/:uid/:course" element={<Course/>}/>
+        </Routes>
+      </BrowserRouter>
     </>
   )
 }
