@@ -6,7 +6,7 @@ import Avatar from 'react-avatar';
 import { useNavigate } from 'react-router-dom';
 
 export default function Navbar() {
-    const [isLoggedIn, setLoggedIn] = useState(true);
+    const [isLoggedIn, setLoggedIn] = useState(false);
     const navigate = useNavigate()
 
     const handleLogout = () => {

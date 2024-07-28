@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { AiOutlineArrowUp } from "react-icons/ai";
-import File from "./file";
+import File from "../file.jsx"
 
-export default function File_Upload({ visibility }){
+export default function FileUpload({ visibility, onChange }){
     const [blobs, setBlobs] = useState([])
     const [files, setFiles] = useState([])
 
@@ -15,7 +15,9 @@ export default function File_Upload({ visibility }){
 
     const handleFileUpload = async (e) => {
       const selectedFiles = e.target.files;
-  
+      console.log(selectedFiles)
+      setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
+
       const blobContents = await Promise.all(
         Array.from(selectedFiles).map(async (file) => {
           const blob = await fileToBlob(file);
@@ -23,7 +25,6 @@ export default function File_Upload({ visibility }){
         })
       );
       
-      setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
       setBlobs((prevBlobs) => [...prevBlobs, ...blobContents]);
     };
 
@@ -53,7 +54,13 @@ export default function File_Upload({ visibility }){
             </div>
 
             <div className="w-full overflow-y-scroll h-96 mt-11 space-y-4 ml-2">
-              <File
+              {
+                files.map((value, index) => {
+                  <File FileName={"W"} Size={123}/>
+                })
+              }
+
+              {/* <File
                 FileName="Dog Stories"
                 Size={`${3311} Bytes`}
               />
@@ -64,31 +71,7 @@ export default function File_Upload({ visibility }){
               <File
                 FileName="Dog Stories"
                 Size={`${3311} Bytes`}
-              />
-              <File
-                FileName="Dog Stories"
-                Size={`${3311} Bytes`}
-              />
-              <File
-                FileName="Dog Stories"
-                Size={`${3311} Bytes`}
-              />
-              <File
-                FileName="Dog Stories"
-                Size={`${3311} Bytes`}
-              />
-              <File
-                FileName="Dog Stories"
-                Size={`${3311} Bytes`}
-              />
-              <File
-                FileName="Dog Stories"
-                Size={`${3311} Bytes`}
-              />
-              <File
-                FileName="Dog Stories"
-                Size={`${3311} Bytes`}
-              />
+              /> */}
           </div>
         </div>
       </div>

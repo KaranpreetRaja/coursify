@@ -11,14 +11,18 @@ export default function Dashboard(){
             <div className='bg-gray-50 w-screen h-screen flex flex-row'>
                 <Sidebar/>
 
-                <div className="flex flex-col w-full p-16 ">
-                    <h2 className="text-2xl font-semibold">Recent Courses</h2>
-                    <div className="flex w-full px-2 py-11 space-x-9">
-                        <Wizard/>
+                <div className="flex flex-col w-6/8 p-16 h-full">
+                    <h2 className="text-2xl font-semibold mb-4">Recent Courses</h2>
+                    <div className="flex flex-wrap w-full">
+                        <div className='mr-4'>
+                            <Wizard/>
+                        </div>
                         <Card courseName="EECS 3311"/>
                         <Card courseName="Dinosaurs"/>
-                        <Card courseName="How to be big"/>
-                        <Card courseName="RIZZ 101"/>
+                        <Card courseName="EECS 3311"/>
+                        <Card courseName="Dinosaurs"/>
+                        <Card courseName="EECS 3311"/>
+                        <Card courseName="Dinosaurs"/>
                     </div>
                 </div>              
             </div>
