@@ -11,6 +11,7 @@ api_key = os.getenv('API_KEY')
 client = AI71(api_key)
 
 text = extract_text_from_pdf("/home/space/Downloads/test.pdf")
+multiple_texts = extract_text_from_pdfs(["/home/space/Downloads/test.pdf", "/home/space/Downloads/test.pdf"])
 
 # very rough
 response = client.chat.completions.create(
