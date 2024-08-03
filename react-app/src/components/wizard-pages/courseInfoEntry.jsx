@@ -3,10 +3,10 @@ import Topic from "../topic";
 
 export default function CourseInfoEntry({ visibility, onChange }) {
   const [course_name, setCourseName] = useState('');
-  const [description, setDescription] = useState('');
+  const [course_description, setCourseDescription] = useState('');
 
   const handleInputChange = () => {
-    onChange({ course_name,  description});
+    onChange({ course_name, course_description});
   };
 
   return (
@@ -40,7 +40,7 @@ export default function CourseInfoEntry({ visibility, onChange }) {
               className="w-full border border-gray-300 p-2 rounded-md text-md max-h-20"
               placeholder="Add a description..."
               onChange={(e) => {
-                setDescription(e.target.value);
+                setCourseDescription(e.target.value);
                 handleInputChange();
               }}
           ></textarea>
