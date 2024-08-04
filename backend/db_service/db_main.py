@@ -1,19 +1,31 @@
 from fastapi import FastAPI, Depends
-from routes.user import db_user_router
-from firebase_admin import initialize_app, credentials, auth, firestore
+from .database import initialize_db
+import signal
+import multiprocessing
+
+initialize_db()
+
+processes = []
+
+def terminate_processes():
+    for process in processes:
+        process.terminate()
+    
+def signal_handler(sig, frame):
+    print("Terminating child processes...")
+    terminate_processes()
+    exit(0)
 
 
-# Initialize Firebase Auth and Firestore
-cred = credentials.Certificate("firebase-adminsdk.json")
-initialize_app(cred)
+# register signal handler
+signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGTERM, signal_handler)
 
-db = firestore.Client()
 
-app = FastAPI()
+# start all processes
+for process in processes:
+    process.start()
 
-# Setup the route for the db-service
-app.include_router(db_user_router, prefix="/api/db/user", dependencies=[Depends(lambda: db), Depends(lambda: auth)])
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+# wait for all processes to finish
+for process in processes:
+    process.join()
