@@ -7,16 +7,42 @@ import Topic_Selection from "./topic_selection";
 import CourseInfoEntry from "./wizard-pages/courseInfoEntry";
 import { useNavigate } from 'react-router-dom';
 import CourseCreationOptions from "./wizard-pages/courseCreationOptions"
+import axios from 'axios';
 
 export default function Wizard() {
   const [formData, setFormData] = useState({});
   const [selectedOption, setSelectedOption] = useState('');
+  const [files, setFiles] = useState([])
   const navigate = useNavigate()
   const [page, setPage] = useState(1);
 
-  const handleSubmit = () => {
-    console.log('Submitting data:', formData);
-  }
+  const handleSubmit = async () => {
+    const newCourseData = new FormData();
+
+    newCourseData.append('uid', '1234');
+    newCourseData.append('session_id', '2932');
+
+    for (const key in formData) {
+      newCourseData.append(key, formData[key]);
+    }
+
+    files.forEach((file, index) => {
+      newCourseData.append('files', file, file.name);
+    });
+
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/api/course_config/create/create_course_material', newCourseData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      console.log('Response:', response.data);
+    } catch (error) {
+      console.error('File upload failed:', error.message);
+    }
+  };
+
 
   const handleNext = () => {
     if (page === 3) {
@@ -39,21 +65,21 @@ export default function Wizard() {
 
   const handleCourseInfoEntry = (enteredInfo) => {
     setFormData((prevFormData) => {
-      return {...prevFormData, ...enteredInfo}
+      return { ...prevFormData, ...enteredInfo }
     })
   }
 
   const handleFileUpload = (uploadedFiles) => {
-
+    setFiles(uploadedFiles)
   }
 
   useEffect(() => {
-    console.log(selectedOption)
-  },[selectedOption])
+    console.log(files)
+  }, [files])
 
   useEffect(() => {
     console.log(formData)
-  }, [formData]) 
+  }, [formData])
 
   return (
     <Popup
@@ -77,10 +103,10 @@ export default function Wizard() {
             </button>
           </div>
 
-          <CourseCreationOptions visibility={page === 1} onChange={handleCourseCreationOptionChange}/>
+          <CourseCreationOptions visibility={page === 1} onChange={handleCourseCreationOptionChange} />
 
-          <CourseInfoEntry visibility={page === 2} onChange={handleCourseInfoEntry}/>
-          <FileUpload visibility={page === 3} onChange={handleFileUpload}/>
+          <CourseInfoEntry visibility={page === 2} onChange={handleCourseInfoEntry} />
+          <FileUpload visibility={page === 3} onChange={handleFileUpload} />
           {/* <Topic_Selection visibility={page === 3} /> */}
 
           <div className="flex justify-between w-full rounded-t-lg px-4 pb-4 mt-auto">
@@ -90,11 +116,18 @@ export default function Wizard() {
               Back
             </button>
 
-            <button
-              onClick={handleNext}
-              className="bg-blue-800 text-white px-6 py-2 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring focus:border-blue-300">
-              Next
-            </button>
+            <div>
+              <button
+                onClick={handleNext}
+                className="bg-blue-800 text-white px-6 py-2 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring focus:border-blue-300">
+                Next
+              </button>
+              <button
+                onClick={handleSubmit}
+                className="bg-blue-800 text-white px-6 py-2 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring focus:border-blue-300">
+                submit
+              </button>
+            </div>
           </div>
         </div>
       )}
