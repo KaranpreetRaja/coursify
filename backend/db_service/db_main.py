@@ -1,4 +1,3 @@
-from fastapi import FastAPI, Depends
 from .database import initialize_db
 import signal
 import multiprocessing

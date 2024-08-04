@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, File, Form, UploadFile
 from typing import List
-from common.comms import request_service
+from ...common.comms import request_service_with_response, request_service
 
 course_create_router = APIRouter()
 
