@@ -17,13 +17,17 @@ export default function Login(){
         
 
         try {
-            const response = await axios.post('/login', {
+            const response = await axios.post('/api/db/user/login_user', {
                 email,
                 password
             });
-
             const uid = response.data.uid;
-            console.log('Login successful! UID:', uid);
+            const session_id = reponse.data.session_id;
+
+            localStorage.setItem('uid', uid);
+            localStorage.setItem('session_id', session_id);
+
+            console.log('Login successful! uid:', uid, "session_id: ", session_id);
             navigate(`/dashboard/${uid}`);
         } catch (error) {
             console.error('Login failed:', error.message);

@@ -11,25 +11,31 @@ export default function Signup(){
 
         const email = e.target.elements.email.value;
         const password = e.target.elements.password.value;
-        const firstName = e.target.elements.firstName.value;
-        const lastName = e.target.elements.lastName.value;
-        const fullName = `${firstName} ${lastName}`
+        const first_name = e.target.elements.firstName.value;
+        const last_name = e.target.elements.lastName.value;
 
         console.log(email);
         console.log(password);
-        console.log(firstName);
-        console.log(lastName);
+        console.log(first_name);
+        console.log(last_name);
 
         try {
-            const response = await axios.post('/register', {
+            const response = await axios.post('/api/db/user/register_user', {
                 email,
                 password,
-                fullName
+                first_name,
+                last_name
             });
 
             const uid = response.data.uid;
-            console.log('Register successful! UID:', uid);
+            const session_id = reponse.data.session_id;
+
+            localStorage.setItem('uid', uid);
+            localStorage.setItem('session_id', session_id);
+
+            console.log('Login successful! uid:', uid, "session_id: ", session_id);
             navigate(`/dashboard/${uid}`);
+            
         } catch (error) {
             console.error('Register failed:', error.message);
         }

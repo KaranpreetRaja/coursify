@@ -5,6 +5,10 @@ import { FaPlus } from "react-icons/fa";
 import Wizard from '../components/wizard';
 
 export default function Dashboard(){
+    const handleCourseCreation = (course_id) => {
+
+    }
+
     return(
         <div>
             <Navbar/>
@@ -15,7 +19,7 @@ export default function Dashboard(){
                     <h2 className="text-2xl font-semibold mb-4">Recent Courses</h2>
                     <div className="flex flex-wrap w-full">
                         <div className='mr-4'>
-                            <Wizard/>
+                            <Wizard handleCourseCreation={handleCourseCreation}/>
                         </div>
                         <Card courseName="EECS 3311"/>
                         <Card courseName="Dinosaurs"/>

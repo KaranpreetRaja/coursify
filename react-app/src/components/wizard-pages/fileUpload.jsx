@@ -28,6 +28,10 @@ export default function FileUpload({ visibility, onChange }) {
     setBlobs((prevBlobs) => [...prevBlobs, ...blobContents]);
   };
 
+  const handleDelete = (index) => {
+    setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+  };
+
   useEffect(() => {
     onChange(files)
   }, [files])
@@ -53,23 +57,12 @@ export default function FileUpload({ visibility, onChange }) {
 
         <div className="w-full overflow-y-scroll h-96 mt-11 space-y-4 ml-2">
           {
-            files.map((value, index) => {
-              <File FileName={"W"} Size={123} />
-            })
-          }
+            files.map((value, index) => (
+              <File index={index} FileName={value.name} Size={value.size} handleDelete={handleDelete}/>
+            )
 
-          {/* <File
-                FileName="Dog Stories"
-                Size={`${3311} Bytes`}
-              />
-              <File
-                FileName="Dog Stories"
-                Size={`${3311} Bytes`}
-              />
-              <File
-                FileName="Dog Stories"
-                Size={`${3311} Bytes`}
-              /> */}
+            )
+          }
         </div>
       </div>
     </div>
