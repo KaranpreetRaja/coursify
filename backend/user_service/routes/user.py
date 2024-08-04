@@ -4,7 +4,7 @@ from common.comms import request_service_with_response
 user_router = APIRouter()
 
 '''
-HTTP POST /api/db/user/register_user
+HTTP POST /api/user/register_user
 Registers a new user with Firebase Authentication
 
 Request Body:
@@ -26,7 +26,7 @@ Error Body:
     "detail": "string"
 }
 '''
-@db_user_router.post("/register_user")
+@user_router.post("/register_user")
 async def register_user(
     user: dict,
    ):
@@ -49,7 +49,7 @@ async def register_user(
 
 
 ''''
-HTTP PUT /api/db/user/login_user
+HTTP PUT /api/user/login_user
 Logs in an existing user with Firebase Authentication
 
 Request Body:
@@ -69,7 +69,7 @@ Error Body:
     "detail": "string"
 }
 '''
-@db_user_router.put("/login_user")
+@user_router.put("/login_user")
 async def login_user(
     email: str,
     password: str
@@ -89,7 +89,7 @@ async def login_user(
         raise HTTPException(status_code=400, detail=str(e))
 
 '''
-HTTP GET /api/db/user/validate_session
+HTTP GET /api/user/validate_session
 Validates a user's session
 
 Request Body:
@@ -108,7 +108,7 @@ Error Body:
     "detail": "string"
 }
 '''
-@db_user_router.get("/validate_session")
+@user_router.get("/validate_session")
 async def validate_session(
     uid: str, 
     session_id: str
@@ -128,7 +128,7 @@ async def validate_session(
         raise HTTPException(status_code=400, detail=str(e))
     
 '''
-HTTP DELETE /api/db/user/logout_user
+HTTP DELETE /api/user/logout_user
 Logs out a user by deleting their session
 
 Request Body:
@@ -146,7 +146,7 @@ Error Body:
     "detail": "string"
 }
 '''
-@db_user_router.delete("/logout_user")
+@user_router.delete("/logout_user")
 async def logout_user(
     session_id: str
     ):
