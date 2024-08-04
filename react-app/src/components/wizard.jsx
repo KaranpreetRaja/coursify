@@ -44,9 +44,9 @@ export default function Wizard({handleCourseCreation}) {
       newCourseData.append('files', file, file.name);
     });
 
-    // newCourseData.forEach((value, key) => {
-    //   console.log(key, value);
-    // });
+    newCourseData.forEach((value, key) => {
+      console.log(key, value);
+    });
     setPage(4)
     try {
       const response = await axios.post('/api/course_config/create/create_course_topics', newCourseData, {
@@ -110,9 +110,9 @@ export default function Wizard({handleCourseCreation}) {
     if (page === 3) {
       handleSubmit();
     }
-    else if (page === 4) {
-      setCourseTopics();
-    }
+    // else if (page === 4) {
+    //   setCourseTopics();
+    // }
     else {
       setPage((prevPage) => prevPage + 1)
     }
@@ -197,7 +197,16 @@ export default function Wizard({handleCourseCreation}) {
 
             <div>
               <button
-                onClick={handleNext}
+                onClick={() => {
+                  if (page !== 4){
+                    handleNext();
+                  }
+                  else{
+                    setCourseTopics();
+                    setPage(1)
+                    close();
+                  }
+                }}
                 className="bg-blue-800 text-white px-6 py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring focus:border-blue-300">
                 Next
               </button>
