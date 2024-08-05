@@ -1,8 +1,5 @@
-from database import initialize_db
 import signal
 import multiprocessing
-
-initialize_db()
 
 processes = []
 
