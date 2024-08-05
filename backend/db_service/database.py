@@ -11,8 +11,7 @@ def initialize_db():
     cred = credentials.Certificate(file_path)
     initialize_app(credential=cred)
 
-    global db
-    db = firestore.client()
 
 def get_db():
+    db = firestore.client()
     return db
