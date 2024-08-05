@@ -2,8 +2,10 @@ import axios from 'axios';
 import { FcGoogle } from 'react-icons/fc'
 import Navbar from '../components/navbar';
 import { useNavigate } from 'react-router-dom';
+import { GiSpellBook } from "react-icons/gi";
 
-export default function Signup(){
+
+export default function Signup() {
     const navigate = useNavigate()
 
     const handleSubmit = async (e) => {
@@ -35,18 +37,19 @@ export default function Signup(){
 
             console.log('Login successful! uid:', uid, "session_id: ", session_id);
             navigate(`/dashboard/${uid}`);
-            
+
         } catch (error) {
             console.error('Register failed:', error.message);
         }
     }
 
-    return(
+    return (
         <div>
-            <Navbar/>
+            <Navbar />
             <div className="sign-up-form-container">
-                <div className='sign-up-form'>
-                    {/* <h2><img src='/logo.png' width={28} /> PipeGen AI</h2> */}
+                <div className="login-form2 flex flex-row mr-3 mb-2 space-x-2 items-center">
+                    <GiSpellBook size={50} className="mb-4" />
+                    <p className='text-semibold text-xl'>Coursify</p>
                 </div>
                 <form className="sign-up-form" onSubmit={handleSubmit}>
                     <div className="form-row">
@@ -98,16 +101,16 @@ export default function Signup(){
                     <button className="btn-submit bg-blue-500 hover:bg-blue-700 transition ease-in-out duration-300 mt-3" type="submit">
                         Signup
                     </button>
-                    <p className="text-sm font-semibold text-center m-4">
+                    {/* <p className="text-sm font-semibold text-center m-4">
                         <span className="border-b w-full text-center border-gray-300 py-1">
                             Or
                         </span>
-                    </p>
+                    </p> */}
                 </form>
-                <button className="h-12 bg-white border-slate-500 border-2 text-black font-bold py-3 px-10 rounded inline-flex items-center">
-                        <FcGoogle size={40}/>
-                        <span className="ml-4">Continue with Google</span>
-                    </button>
+                {/* <button className="h-12 bg-white border-slate-500 border-2 text-black font-bold py-3 px-10 rounded inline-flex items-center">
+                    <FcGoogle size={40} />
+                    <span className="ml-4">Continue with Google</span>
+                </button> */}
             </div>
         </div>
     )
