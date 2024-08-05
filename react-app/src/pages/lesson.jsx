@@ -20,7 +20,7 @@ export default function Lesson() {
     const [lessonData, setLessonData] = useState({
         lesson_name: 'Introduction to Machine Learning',
         lesson_description: 'This lesson covers the basics of machine learning including supervised and unsupervised learning.',
-        lesson_loaded: true,
+        lesson_loaded: false,
         material: 'E = mc^2'
     });
 
@@ -28,16 +28,20 @@ export default function Lesson() {
     //     const fetchLesson = async () => {
     //         try {
     //             const response = await axios.get("/api/course_config/get/get_lesson", {
-    //                 params: {
-    //                     uid,
-    //                     session_id,
-    //                     lesson_id
-    //                 }
+    //                 uid,
+    //                 session_id,
+    //                 course_id,
+    //                 lesson_id
     //             });
 
     //             if (response.data) {
     //                 setLessonData(response.data);
     //             }
+
+    //             if (!response.data.lesson_loaded) {
+    //                 setTimeout(fetchLesson, 3000);
+    //             }
+
     //         } catch (error) {
     //             console.error('Failed to fetch lesson:', error.message);
     //         }
@@ -55,6 +59,13 @@ export default function Lesson() {
                 <div className='bg-gray-100 w-full flex flex-col'>
                     <div className='bg-gray-100 w-full flex flex-col items-start py-4 px-8 mb-8'>
                         <div className='space-y-4 text-gray-100 font-medium text-md'>
+                            <div className='px-4 mb-4'>
+                                <nav className='text-gray-500 text-sm'>
+                                    <Link to={`/course/${uid}/${course_id}`} className='hover:underline'>Course</Link>
+                                    <span className='mx-2'>{'>'}</span>
+                                    <span className='text-gray-900'>Lesson</span>
+                                </nav>
+                            </div>
                             <div className='flex flex-row space-x-3 items-center'>
                                 <div className='h-11 w-4 bg-blue-500'></div>
                                 <h1 className='text-black font-bold text-3xl '>{lessonData.lesson_name}</h1>
@@ -64,23 +75,39 @@ export default function Lesson() {
                             </p>
                         </div>
                     </div>
-                    {lessonData.lesson_loaded && lessonData.material && (
+                    {lessonData.lesson_loaded && lessonData.material ? (
                         <div className='px-4 flex flex-col items-start'>
-                            <div className='bg-white shadow-md rounded-lg p-6 mb-4 w-full'>
+                            <div className=''>
                                 <h2 className='text-2xl font-semibold mb-4'>Lesson Material</h2>
                                 <p>{lessonData.material}</p>
                             </div>
                         </div>
-                    )}
-
+                    ) : (
+                        <div className='px-4 flex flex-col items-center'>                       
+                            <div className="bg-white shadow-md rounded-lg p-6 mb-4 w-full flex flex-col gap-4">
+                                <div className="animate-pulse bg-gray-300 w-2/4 h-5 rounded-full"></div>
+                                <div className="animate-pulse bg-gray-300 w-3/4 h-5 rounded-full"></div>
+                                <div className="animate-pulse bg-gray-300 w-full h-5 rounded-full"></div>
+                                <div className="animate-pulse bg-gray-300 w-full h-5 rounded-full"></div>
+                                <div className="animate-pulse bg-gray-300 w-3/4 h-5 rounded-full"></div>
+                                <div className="animate-pulse bg-gray-300 w-full h-5 rounded-full"></div>
+                                <div className="animate-pulse bg-gray-300 w-full h-5 rounded-full"></div>
+                            </div>
+                        </div>
+                    )
+                    }
 
                     <div className="flex justify-between w-full rounded-t-lg px-4 pb-4 mt-auto text-2xl">
                         <Link
+                            to={lesson_id <= 1
+                                ? ''
+                                : `/course/${uid}/${course_id}/lesson/${Number(lesson_id) - 1}`}
                             className='bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring focus:border-blue-300'>
                             Back
                         </Link>
-                        <Quiz/>
+                        <Quiz course_id={course_id} lesson_id={lesson_id} />
                         <Link
+                            to={`/course/${uid}/${course_id}/lesson/${Number(lesson_id) + 1}`}
                             className="bg-blue-800 text-white px-6 py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring focus:border-blue-300">
                             Next
                         </Link>

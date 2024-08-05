@@ -7,7 +7,8 @@ export default {
   theme: {
     extend: {
       height: {
-        'wizard': '700px'
+        'wizard': '700px',
+        'quiz': '700px'
       },
       width: {
         'topic': '900px'
