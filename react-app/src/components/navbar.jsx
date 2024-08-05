@@ -6,7 +6,7 @@ import Avatar from 'react-avatar';
 import { useNavigate } from 'react-router-dom';
 
 export default function Navbar() {
-    const [isLoggedIn, setLoggedIn] = useState(false);
+    const [isLoggedIn, setLoggedIn] = useState(true);
     const navigate = useNavigate()
 
     const handleLogout = () => {
@@ -30,7 +30,9 @@ export default function Navbar() {
 
             <div className="flex items-center">
                 {isLoggedIn && (
-                    <div>
+                    <div className="space-x-4">
+                        {/* <Link to="/dashboard" className="btn-login">dashboard</Link> */}
+
                         <Avatar
                             name={userInitials}
                             size="50"

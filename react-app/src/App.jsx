@@ -8,6 +8,7 @@ import React from "react";
 import Profile from './pages/profile';
 import Course from './pages/course';
 import { useState } from 'react';
+import Lesson from './pages/lesson';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -21,7 +22,8 @@ function App() {
             <Route path="/profile" element={<Profile/>}/>
             <Route path="/login" element={<Login/>}/>
             <Route path="/signup" element={<Signup/>}/>
-            <Route path="/dashboard/:uid/:course" element={<Course/>}/>
+            <Route path="/course/:uid/:course_id" element={<Course/>}/>
+            <Route path="/course/:uid/:course_id/lesson/:lesson_id" element={<Lesson/>}/>
         </Routes>
       </BrowserRouter>
     </>
