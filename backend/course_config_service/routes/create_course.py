@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status, File, Form, UploadFile
+from pypdf import PdfReader 
 from typing import List
 from ...common.comms import request_service_with_response, request_service
 
@@ -41,6 +42,7 @@ async def create_course_material(
     files: List[UploadFile] = File(...)
     ):
 
+    pdf_content = extract_text_from_pdfs(files)    
 
     data = {
         "action": "create_course_topics",
@@ -51,6 +53,16 @@ async def create_course_material(
         "pdf_material": pdf_content,
     }
 
+def extract_text_from_pdfs(pdf_paths):
+    extracted_text = {}
+    for pdf_path in pdf_paths:
+        pdf = PdfReader(pdf_path)
+        text = ''
+
+        for page in pdf.pages:
+            text += page.extract_text()
+        extracted_text[pdf_path] = text
+    return extracted_text
 
 '''
 HTTP POST /api/course_config/create/set_course_topics
