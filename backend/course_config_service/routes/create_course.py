@@ -8,7 +8,7 @@ course_create_router = APIRouter()
 
 '''
 HTTP POST /api/course_config/create/create_course_topics
-Creates a new course in the database
+Generates topics that a course can be made from
 
 Request Body:
 {
@@ -24,7 +24,14 @@ Response Body:
 {
     "course_id": "string",
     "topics": [
-        "string", "string", "string", ...
+        {
+            "topic": "string",
+            "explanation": "string"
+        },
+        {
+            "topic": "string",
+            "explanation": "string"
+        },
     ]
 }
 
@@ -75,7 +82,15 @@ Request Body:
 
     "course_id": "string",
     "topics": [
-        "string", "string", "string", ...
+    {
+        "topic": "string",
+        "explanation": "string"
+    },
+    {
+        "topic": "string",
+        "explanation": "string"
+    }
+    ...
     ]
 }
 
