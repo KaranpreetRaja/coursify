@@ -14,25 +14,6 @@ import concurrent.futures
 logger = logging.getLogger(__name__)
 
 
-def generate_lesson(lesson_id: str, lesson_name: str, lesson_explanation: str) -> dict:
-
-    # Stage 1: Generate lessons for each topic using the topic names and explinations
-    # TODO: Implement lesson generation
-
-
-    lesson_content = create_lesson(lesson_name, lesson_explanation)
-
-    # Stage 2: add generated lesson to existing document by sending it to lesson_db_queue
-    data = {
-        "action": "add_lesson_content",
-        "lesson_id": lesson_id,
-        "lesson_name": lesson_name,
-        "lesson_explanation": lesson_explanation,
-        "lesson_content": lesson_content
-    }
-    return request_service_with_response("lesson_db", data)
-
-
 def create_lesson(topic, explanation):
     load_dotenv()
     api_key = os.getenv('API_KEY')
@@ -47,6 +28,21 @@ def create_lesson(topic, explanation):
         ],
     )
     return response
+
+
+def generate_lesson(lesson_id: str, lesson_name: str, lesson_explanation: str) -> dict:
+
+    # Stage 1: Generate lessons for each topic using the topic names and explinations
+    lesson_material = create_lesson(lesson_name, lesson_explanation)
+
+    # Stage 2: add generated lesson to existing document by sending it to lesson_db_queue
+    data = {
+        "action": "add_material_to_lesson",
+        "lesson_id": lesson_id,
+        "lesson_material": lesson_material
+    }
+    return request_service_with_response("lesson_db", data)
+
 
 def handle_lesson_gen_requests(data):
     action = data["action"]
