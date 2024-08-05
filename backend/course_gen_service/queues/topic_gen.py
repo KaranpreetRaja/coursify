@@ -22,51 +22,6 @@ def create_course(uid: str, course_name: str, course_description: str, pdf_mater
     }
     return request_service_with_response("course_db", data)
 
-def handle_topic_requests(data):
-    uid = data["uid"]
-    action = data["action"]
-    course_name = data["course_name"]
-    course_description = data["course_description"]
-
-    pdf_material = data["pdf_material"]
-
-    
-    if action == "create_topics":
-        # Stage 1: Segment the PDF material into topics
-
-        text = pdf_material.replace("\n", " ")
-        text = re.sub(r'\s{2,}', ' ', text)
-
-        if len(text) > 4000:
-            text_list = [text[i:i+4000] for i in range(0, len(text), 4000)]
-
-        # response = [{'topic_name': 'topic explanation'}]
-        response = create_lesson_topics(text_list)
-
-        json_strings = [resp.choices[0].message.content.replace("User:", "") for resp in response]
-
-        all_lessons = []
-
-        # Iterate through each JSON string, fix the formatting, parse it, and extend the all_lessons list
-        for json_str in json_strings:
-            try:
-                fixed_json_str = fix_json_string(json_str)
-                lessons = json.loads(fixed_json_str)
-                all_lessons.extend(lessons)
-            except json.JSONDecodeError as e:
-                print(f"Error decoding JSON: {e}")
-
-        # Merge the dictionaries into a single dictionary
-        lesson_topics = {lesson['topic']: lesson['explanation'] for lesson in all_lessons}
-
-
-        # Stage 2: Create course in database
-        create_course(uid, course_name, course_description, pdf_material, lesson_topics)
-
-    elif action == "set_topics":
-        pass
-
-
 # Function to clean and fix the JSON strings
 def fix_json_string(json_string):
     # Removing leading and trailing spaces and newlines
@@ -122,3 +77,68 @@ def create_lesson_topics(text_list):
             lesson_topics.append(response)
     return lesson_topics
 
+ 
+def handle_topic_requests(data):
+    uid = data["uid"]
+    action = data["action"]
+   
+    if action == "create_topics":
+        course_name = data["course_name"]
+        course_description = data["course_description"]
+        pdf_material = data["pdf_material"]
+
+        # Stage 1: Segment the PDF material into topics
+
+        text = pdf_material.replace("\n", " ")
+        text = re.sub(r'\s{2,}', ' ', text)
+
+        if len(text) > 4000:
+            text_list = [text[i:i+4000] for i in range(0, len(text), 4000)]
+
+        # response = [{'topic_name': 'topic explanation'}]
+        response = create_lesson_topics(text_list)
+
+        json_strings = [resp.choices[0].message.content.replace("User:", "") for resp in response]
+
+        all_lessons = []
+
+        # Iterate through each JSON string, fix the formatting, parse it, and extend the all_lessons list
+        for json_str in json_strings:
+            try:
+                fixed_json_str = fix_json_string(json_str)
+                lessons = json.loads(fixed_json_str)
+                all_lessons.extend(lessons)
+            except json.JSONDecodeError as e:
+                print(f"Error decoding JSON: {e}")
+
+        # Merge the dictionaries into a single dictionary
+        lesson_topics = {lesson['topic']: lesson['explanation'] for lesson in all_lessons}
+
+
+        # Stage 2: Create course in database
+        create_course(uid, course_name, course_description, pdf_material, lesson_topics)
+
+    elif action == "set_topics":
+        course_id = data["course_id"]
+        topics = data["topics"]
+
+        # Stage 1: create course in database
+
+
+        # Stage 2: use `lesson_gen` queue to generate lessons for each topic
+        for topic in topics:
+            lesson_id = topic["topic_id"]
+            lesson_name = topic["topic"]
+            lesson_explanation = topic["explanation"]
+
+            data = {
+                "action": "generate_lessons",
+                "lesson_id": lesson_id,
+                "lesson_name": lesson_name,
+                "lesson_explanation": lesson_explanation
+            }
+            request_service("lesson_gen", data)
+
+
+
+start_consuming_service("topic_gen", handle_topic_requests)
