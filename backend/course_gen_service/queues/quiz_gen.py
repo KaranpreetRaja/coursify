@@ -146,4 +146,5 @@ def handle_quiz_gen_requests(data):
 
         return quiz
     
+
 start_consuming_service("quiz_gen", handle_quiz_gen_requests)

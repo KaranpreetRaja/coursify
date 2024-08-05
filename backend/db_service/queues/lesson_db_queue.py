@@ -13,7 +13,7 @@ from common.comms import start_consuming_service, request_service, request_servi
 
 
 def handle_lesson_db_requests(data):
-    print(f"Handling lesson db requests with action: {data['action']}")
+    print(f"Handling lesson db requests with action: {data['action']} and data: {data}")
 
     try:
         if data["action"] == "create_lesson":
@@ -119,4 +119,5 @@ def handle_lesson_db_requests(data):
 
 lesson_collection = get_db().collection("lessons")
 
-start_consuming_service("lesson_db", handle_request_func=handle_lesson_db_requests)
+def start_lesson_db_consumer():
+    start_consuming_service("lesson_db", handle_request_func=handle_lesson_db_requests)

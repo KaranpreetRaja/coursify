@@ -172,5 +172,5 @@ def handle_topic_requests(data):
             request_service("lesson_gen", data)
 
 
-
-start_consuming_service("topic_gen", handle_topic_requests)
+def start_topic_gen_consumer():
+    start_consuming_service("topic_gen", handle_topic_requests)

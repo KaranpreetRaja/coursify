@@ -98,4 +98,5 @@ def handle_lesson_gen_requests(data):
         
 executor = concurrent.futures.ProcessPoolExecutor(max_workers=4)
 
-start_consuming_service("lesson_gen", handle_lesson_gen_requests)
+def start_lesson_gen_consumer():
+    start_consuming_service("lesson_gen", handle_lesson_gen_requests)

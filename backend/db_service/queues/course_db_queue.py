@@ -13,7 +13,7 @@ from common.comms import start_consuming_service, request_service, request_servi
 
 
 def handle_course_db_requests(data):
-    print("Handling course db requests")
+    print(f"Handling course db requests with action: {data['action']} and data: {data}")
 
     try:
         if data["action"] == "create_course":
@@ -82,4 +82,5 @@ db = get_db()
 
 course_collection = db.collection("courses")
 
-start_consuming_service("course_db", handle_request_func=handle_course_db_requests)
+def start_course_db_consumer():
+    start_consuming_service("course_db", handle_request_func=handle_course_db_requests)
