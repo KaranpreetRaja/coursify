@@ -41,11 +41,15 @@ async def create_course_material(
     files: List[UploadFile] = File(...)
     ):
 
-    print("Creating course material")
-    print(f"COURSE NAME\n: {course_name} \nCOURSE DESCRIPTION\n: {course_description} \nFILES\n: {files} \nUID\n: {uid} \nSESSION ID\n: {session_id} ") 
 
-    for file in files:
-        print(f"FILE: {file.filename}")
+    data = {
+        "action": "create_course_topics",
+        "uid": uid,
+        "session_id": session_id,
+        "course_name": course_name,
+        "course_description": course_description,
+        "pdf_material": pdf_content,
+    }
 
 
 '''
@@ -81,7 +85,11 @@ async def set_course_topics(
     topics: List[str] = Form(...)
     ):
 
-    print("Setting course topics")
-    print(f"COURSE ID\n: {course_id} \nTOPICS\n: {topics} \nUID\n: {uid} \nSESSION ID\n: {session_id} ")
-
+    data = {
+        "action": "set_course_topics",
+        "uid": uid,
+        "session_id": session_id,
+        "course_id": course_id,
+        "topics": topics
+    }
 

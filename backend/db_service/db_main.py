@@ -1,4 +1,4 @@
-from .database import initialize_db
+from database import initialize_db
 import signal
 import multiprocessing
 
@@ -16,7 +16,7 @@ def signal_handler(sig, frame):
     exit(0)
 
 # Start the user_queue consumer
-from .queues.user_queue import start_user_db_consumer
+from queues.user_queue import start_user_db_consumer
 user_queue_consumer_process = multiprocessing.Process(target=start_user_db_consumer)
 processes.append(user_queue_consumer_process)
 

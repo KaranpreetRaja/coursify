@@ -57,10 +57,10 @@ def on_request(ch, method, properties, body, handle_request_func):
 
 def start_consuming_service(queue_name, handle_request_func):
     connection, channel = create_connection()
-    channel.queue_declare(queue='db_queue')
+    channel.queue_declare(queue=queue_name)
     channel.basic_qos(prefetch_count=1)
     # using a partial function to pass additional arguments to the on_request function
-    on_request_partial = partial(on_request, func=handle_request_func)
+    on_request_partial = partial(on_request, handle_request_func=handle_request_func)
     channel.basic_consume(queue= queue_name, on_message_callback=on_request_partial)
     print("Consuming Service Starting")
     channel.start_consuming()

@@ -1,5 +1,13 @@
+import sys
+import os
+# adds top-level project directory to the sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
+
 from fastapi import APIRouter, HTTPException
 from common.comms import request_service_with_response
+import logging
+
 
 user_router = APIRouter()
 
