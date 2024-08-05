@@ -24,7 +24,6 @@ Response Body:
             "lesson_id": "string",
             "lesson_name": "string",
             "lesson_description": "string",
-            "lesson_loaded": "bool",
         },
         ...
     ]
@@ -58,6 +57,8 @@ async def get_course(
         ]
     }
 
+    
+
 '''
 HTTP GET /api/course_config/get/get_lesson
 Gets the lesson information from the database
@@ -79,6 +80,26 @@ Response Body:
 
     // If lesson_loaded is false, material will be Null
     "material: "string", // material will be in Latex format
+
+    "quiz_loaded": bool,
+
+    // If quiz_loaded is false, questions will be empty
+    "questions": [
+        {
+            "question_type": "string", // "multiple_choice" or "true_false"
+            
+            // If question_type is "true_false", options will be empty
+            "options": [
+                "string", "string", "string", ...
+            ],
+            "question": "string",
+            "answer": "string"
+        },
+        ...
+    ]
+
+
+
 }
 
 Error Body:
@@ -101,6 +122,20 @@ async def get_lesson(
         "lesson_name": "lesson 1",
         "lesson_description": "This is lesson 1",
         "lesson_loaded": "true",
+        "quiz_loaded": "true",
+        "questions": [
+            {
+                "question_type": "multiple_choice",
+                "question": "What is the powerhouse of the cell?",
+                "options": [
+                    "Mitochondria",
+                    "Nucleus",
+                    "Ribosome",
+                    "Golgi Apparatus"
+                ],
+                "answer": "Mitochondria"
+            }
+        ],
         "material": """
 # Lesson 1
 
@@ -129,7 +164,7 @@ Request Body:
 
 Response Body:
 {
-    "name": "string",
+    "lesson_name": "string",
     "quiz_loaded": "bool",
 
     // If quiz_loaded is false, questions will be empty
@@ -165,7 +200,7 @@ async def get_quiz(
     print(f"COURSE ID\n: {course_id} \nLESSON ID\n: {lesson_id} \nUID\n: {uid} \nSESSION ID\n: {session_id} ")
 
     return {
-        "name": "quiz 1",
+        "lesson_name": "lesson 1",
         "quiz_loaded": "true",
         "questions": [
             {
@@ -271,3 +306,64 @@ async def get_all_courses_trending(
         ]
     }
 
+'''
+HTTP GET /api/course_config/get/get_lesson_loaded
+Checks if a lesson is loaded
+
+Request Body:
+{
+    "uid": "string",
+    "session_id": "string",
+
+    "course_id": "string",
+    "lesson_id": "string",
+}
+
+Response Body:
+{
+    "lesson_loaded": "bool",
+}
+
+Error Body:
+{
+    "detail": "string"
+}
+'''
+@course_get_router.get("/get_lesson_loaded")
+async def get_lesson_loaded(
+    uid: str,
+    session_id: str,
+    course_id: str,
+    lesson_id: str
+    ):
+
+    print("Getting lesson loaded")
+    print(f"COURSE ID\n: {course_id} \nLESSON ID\n: {lesson_id} \nUID\n: {uid} \nSESSION ID\n: {session_id} ") 
+
+    return {
+        "lesson_loaded": "true"
+    }
+
+'''
+HTTP GET /api/course_config/get/get_quiz_loaded
+Checks if a quiz is loaded
+
+Request Body:
+{
+    "uid": "string",
+    "session_id": "string",
+
+    "course_id": "string",
+    "lesson_id": "string",
+}
+
+Response Body:
+{
+    "quiz_loaded": "bool",
+}
+
+Error Body:
+{
+    "detail": "string"
+}
+'''
