@@ -21,31 +21,26 @@ export default function Course() {
                 lesson_id: '1',
                 lesson_name: 'Introduction to Machine Learning',
                 lesson_description: 'Overview of machine learning concepts and applications.',
-                lesson_loaded: true
             },
             {
                 lesson_id: '2',
                 lesson_name: 'Supervised Learning',
                 lesson_description: 'Deep dive into supervised learning techniques and algorithms.',
-                lesson_loaded: true
             },
             {
                 lesson_id: '3',
                 lesson_name: 'Unsupervised Learning',
                 lesson_description: 'Understanding clustering, association, and dimensionality reduction.',
-                lesson_loaded: false
             },
             {
                 lesson_id: '4',
                 lesson_name: 'Reinforcement Learning',
                 lesson_description: 'Basics of reinforcement learning and its applications.',
-                lesson_loaded: true
             },
             {
                 lesson_id: '5',
                 lesson_name: 'Neural Networks and Deep Learning',
                 lesson_description: 'Introduction to neural networks and deep learning architectures.',
-                lesson_loaded: false
             }
         ]
     });
@@ -90,7 +85,6 @@ export default function Course() {
                             lesson_id={lesson.lesson_id}
                             lesson_name={lesson.lesson_name}
                             lesson_description={lesson.lesson_description}
-                            lesson_loaded={lesson.lesson_loaded}
                             course_id={course_id}
                         />
                     ))}
