@@ -127,6 +127,7 @@ def handle_topic_requests(data):
                 
             
             return {
+                "status": "success",
                 "course_id": response["course_id"],
                 "topics": all_lessons
             }

@@ -25,7 +25,8 @@ def handle_course_db_requests(data):
                 "course_topics": data["topics"]
             }
             course_ref = course_collection.add(course_data)
-            course_id = course_ref.id
+            print(f"Course created: {course_ref}")
+            course_id = course_ref[1].id
 
             return {
                 "status": "success",

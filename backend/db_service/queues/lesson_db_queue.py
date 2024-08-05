@@ -26,7 +26,8 @@ def handle_lesson_db_requests(data):
 
             }
             lesson_ref = lesson_collection.add(lesson_data)
-            lesson_id = lesson_ref.id
+            print(f"Lesson created: {lesson_ref}")
+            lesson_id = lesson_ref[1].id
 
             return {
                 "status": "success",

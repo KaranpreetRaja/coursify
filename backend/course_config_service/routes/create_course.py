@@ -54,12 +54,12 @@ async def create_course_material(
     session_id: str = Form(...),
     course_name: str = Form(...),
     course_description: str = Form(...),
-    # files: List[UploadFile] = File(...)
-    files: str = Form(...)
+    files: List[UploadFile] = File(...)
+
     ):
     try:
-        # pdf_content = extract_text_from_pdfs(files)    
-        pdf_content = files
+        pdf_content = extract_text_from_pdfs(files)    
+        # pdf_content = files
         data = {
             "action": "create_course_topics",
             "uid": uid,
@@ -68,23 +68,17 @@ async def create_course_material(
             "pdf_material": pdf_content,
         }
 
-        print("Sending request to course_gen")
         response = request_service_with_response("topic_gen", data)
-        print("Course_gen completed")
-        
+
         if response["status"] == "error":
+            print("Error in response from course_gen")
             raise HTTPException(status_code=400, detail=response["message"])
+
         response_topics = response["topics"]
-        topics = []
-        for topic in response_topics.keys():
-            topics.append({
-                "topic": topic,
-                "explanation": response[topic]
-            })
-        
+
         return {
             "course_id": response["course_id"],
-            "topics": topics
+            "topics": response_topics
         }
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
