@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, File, Form, UploadFile
 from pypdf import PdfReader 
-from typing import List
+from typing import List, Optional
 import sys
 import os
 
@@ -24,7 +24,7 @@ Request Body:
     "session_id": "string",
 
     "course_name": "string",
-    "course_description": "string",
+    "course_description": "string"
 }
 Files will be sent using File from fastapi
 
@@ -54,12 +54,12 @@ async def create_course_material(
     session_id: str = Form(...),
     course_name: str = Form(...),
     course_description: str = Form(...),
-    files: List[UploadFile] = File(...)
+    # files: List[UploadFile] = File(...)
+    files: str = Form(...)
     ):
-    
     try:
-        pdf_content = extract_text_from_pdfs(files)    
-
+        # pdf_content = extract_text_from_pdfs(files)    
+        pdf_content = files
         data = {
             "action": "create_course_topics",
             "uid": uid,
@@ -68,8 +68,10 @@ async def create_course_material(
             "pdf_material": pdf_content,
         }
 
+        print("Sending request to course_gen")
         response = request_service_with_response("topic_gen", data)
-
+        print("Course_gen completed")
+        
         if response["status"] == "error":
             raise HTTPException(status_code=400, detail=response["message"])
         response_topics = response["topics"]
