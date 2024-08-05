@@ -48,17 +48,38 @@ async def create_course_material(
     course_description: str = Form(...),
     files: List[UploadFile] = File(...)
     ):
+    
+    try:
+        pdf_content = extract_text_from_pdfs(files)    
 
-    pdf_content = extract_text_from_pdfs(files)    
+        data = {
+            "action": "create_course_topics",
+            "uid": uid,
+            "course_name": course_name,
+            "course_description": course_description,
+            "pdf_material": pdf_content,
+        }
 
-    data = {
-        "action": "create_course_topics",
-        "uid": uid,
-        "session_id": session_id,
-        "course_name": course_name,
-        "course_description": course_description,
-        "pdf_material": pdf_content,
-    }
+        response = request_service_with_response("topic_gen", data)
+
+        if response["status"] == "error":
+            raise HTTPException(status_code=400, detail=response["message"])
+        response_topics = response["topics"]
+        topics = []
+        for topic in response_topics.keys():
+            topics.append({
+                "topic": topic,
+                "explanation": response[topic]
+            })
+        
+        return {
+            "course_id": response["course_id"],
+            "topics": topics
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
 
 def extract_text_from_pdfs(pdf_paths):
     extracted_text = {}
@@ -112,11 +133,22 @@ async def set_course_topics(
     topics: List[str] = Form(...)
     ):
 
-    data = {
-        "action": "set_course_topics",
-        "uid": uid,
-        "session_id": session_id,
-        "course_id": course_id,
-        "topics": topics
-    }
+    try:
+        data = {
+            "action": "set_topics",
+            "uid": uid,
+            "course_id": course_id,
+            "topics": topics
+        }
 
+        response = request_service_with_response("course_gen", data)
+
+        if response["status"] == "error":
+            raise HTTPException(status_code=400, detail=response["message"])
+        
+        return {
+            "status": "success"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
