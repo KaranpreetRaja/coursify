@@ -20,7 +20,7 @@ export default function Lesson() {
     const [lessonData, setLessonData] = useState({
         lesson_name: 'Introduction to Machine Learning',
         lesson_description: 'This lesson covers the basics of machine learning including supervised and unsupervised learning.',
-        lesson_loaded: false,
+        lesson_loaded: true,
         material: 'E = mc^2'
     });
 
