@@ -1,10 +1,10 @@
 from fastapi import FastAPI, Depends
-from routes.user import db_user_router
+from routes.user import user_router
 
 app = FastAPI()
 
 # Setup the route for the user service
-app.include_router(db_user_router, prefix="/api/user")
+app.include_router(user_router, prefix="/api/user")
 
 if __name__ == "__main__":
     import uvicorn

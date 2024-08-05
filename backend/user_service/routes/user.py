@@ -1,5 +1,13 @@
+import sys
+import os
+# adds top-level project directory to the sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
+
 from fastapi import APIRouter, HTTPException
 from common.comms import request_service_with_response
+import logging
+
 
 user_router = APIRouter()
 
@@ -89,7 +97,7 @@ async def login_user(
         raise HTTPException(status_code=400, detail=str(e))
 
 '''
-HTTP GET /api/user/validate_session
+HTTP POST /api/user/validate_session
 Validates a user's session
 
 Request Body:
@@ -108,16 +116,15 @@ Error Body:
     "detail": "string"
 }
 '''
-@user_router.get("/validate_session")
-async def validate_session(
-    uid: str, 
-    session_id: str
-    ):
+@user_router.post("/validate_session")
+async def validate_session(session_data: dict):
     try:
+        logging.info(f"Validating session for user {session_data['uid']}")
+
         data = {
             "action": "validate_session",
-            "uid": uid,
-            "session_id": session_id
+            "uid": session_data["uid"],
+            "session_id": session_data["session_id"]
         }
         response = request_service_with_response("user_queue", data)
 

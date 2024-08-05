@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status, File, Form, UploadFile
+from pypdf import PdfReader 
 from typing import List
 from ...common.comms import request_service_with_response, request_service
 
@@ -41,12 +42,27 @@ async def create_course_material(
     files: List[UploadFile] = File(...)
     ):
 
-    print("Creating course material")
-    print(f"COURSE NAME\n: {course_name} \nCOURSE DESCRIPTION\n: {course_description} \nFILES\n: {files} \nUID\n: {uid} \nSESSION ID\n: {session_id} ") 
+    pdf_content = extract_text_from_pdfs(files)    
 
-    for file in files:
-        print(f"FILE: {file.filename}")
+    data = {
+        "action": "create_course_topics",
+        "uid": uid,
+        "session_id": session_id,
+        "course_name": course_name,
+        "course_description": course_description,
+        "pdf_material": pdf_content,
+    }
 
+def extract_text_from_pdfs(pdf_paths):
+    extracted_text = {}
+    for pdf_path in pdf_paths:
+        pdf = PdfReader(pdf_path)
+        text = ''
+
+        for page in pdf.pages:
+            text += page.extract_text()
+        extracted_text[pdf_path] = text
+    return extracted_text
 
 '''
 HTTP POST /api/course_config/create/set_course_topics
@@ -81,7 +97,11 @@ async def set_course_topics(
     topics: List[str] = Form(...)
     ):
 
-    print("Setting course topics")
-    print(f"COURSE ID\n: {course_id} \nTOPICS\n: {topics} \nUID\n: {uid} \nSESSION ID\n: {session_id} ")
-
+    data = {
+        "action": "set_course_topics",
+        "uid": uid,
+        "session_id": session_id,
+        "course_id": course_id,
+        "topics": topics
+    }
 
