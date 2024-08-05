@@ -13,7 +13,7 @@ from common.comms import start_consuming_service, request_service, request_servi
 
 def create_course(uid: str, course_name: str, course_description: str, pdf_material: str, topics: dict) -> dict:
     data = {
-        "action": "create_course_with_topics",
+        "action": "create_course",
         "uid": uid,
         "course_name": course_name,
         "course_description": course_description,
@@ -82,7 +82,7 @@ def handle_topic_requests(data):
     uid = data["uid"]
     action = data["action"]
    
-    if action == "create_topics":
+    if action == "create_course_topics":
         course_name = data["course_name"]
         course_description = data["course_description"]
         pdf_material = data["pdf_material"]
@@ -116,16 +116,48 @@ def handle_topic_requests(data):
 
 
         # Stage 2: Create course in database
-        create_course(uid, course_name, course_description, pdf_material, lesson_topics)
+        response = create_course(uid, course_name, course_description, pdf_material, lesson_topics)
+
+
+        return {
+            "course_id": response["course_id"],
+            "topics": all_lessons
+        }
 
     elif action == "set_topics":
         course_id = data["course_id"]
         topics = data["topics"]
 
-        # Stage 1: create course in database
+        # Stage 1: create lessons in the database
+        lessons = []
+        for topic in topics:
+            lesson_name = topic["topic"]
+            lesson_explanation = topic["explanation"]
+
+            data = {
+                "action": "create_lesson",
+                "lesson_name": lesson_name,
+                "lesson_description": lesson_explanation
+            }
+            response = request_service_with_response("lesson_db", data)
+            lesson_id = response["lesson_id"]
+            lessons.append({
+                "lesson_id": lesson_id,
+                "lesson_name": lesson_name,
+                "lesson_explanation": lesson_explanation
+            })
+
+        # Stage 2: add lessons to course in the database
+        data = {
+            "action": "add_lessons_to_course",
+            "course_id": course_id,
+            "lessons": lessons
+        }
+
+        request_service_with_response("course_db", data)
 
 
-        # Stage 2: use `lesson_gen` queue to generate lessons for each topic
+        # Stage 3: use `lesson_gen` queue to generate lessons for each topic
         for topic in topics:
             lesson_id = topic["topic_id"]
             lesson_name = topic["topic"]
