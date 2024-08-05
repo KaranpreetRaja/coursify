@@ -33,10 +33,6 @@ def handle_topic_requests(data):
     
     if action == "create_topics":
         # Stage 1: Segment the PDF material into topics
-        load_dotenv()
-        api_key = os.getenv('API_KEY')
-
-        client = AI71(api_key)
 
         text = pdf_material.replace("\n", " ")
         text = re.sub(r'\s{2,}', ' ', text)
@@ -86,6 +82,12 @@ def fix_json_string(json_string):
 
 
 def create_lesson_topics(text_list):
+    
+    load_dotenv()
+    api_key = os.getenv('API_KEY')
+
+    client = AI71(api_key)
+    
     lesson_topics = []
     if len(text_list) == 1:
         response = client.chat.completions.create(
