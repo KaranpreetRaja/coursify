@@ -1,7 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, status, File, Form, UploadFile
 from pypdf import PdfReader 
 from typing import List
-from ...common.comms import request_service_with_response, request_service
+
+# adds top-level project directory to the sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
+
+from fastapi import APIRouter, HTTPException
+from common.comms import request_service_with_response
 
 course_create_router = APIRouter()
 

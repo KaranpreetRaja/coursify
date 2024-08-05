@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends
 
+from course_config_service.routes.create_course import course_create_router
 
 app = FastAPI()
 
