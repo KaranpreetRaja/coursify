@@ -8,6 +8,7 @@ import CourseInfoEntry from "./wizard-pages/courseInfoEntry";
 import { useNavigate } from 'react-router-dom';
 import CourseCreationOptions from "./wizard-pages/courseCreationOptions"
 import axios from 'axios';
+import LoadingScreen from "./loading";
 
 export default function Wizard({handleCourseCreation}) {
   const [formData, setFormData] = useState({});
@@ -21,6 +22,7 @@ export default function Wizard({handleCourseCreation}) {
   const [generatedTopics, setGeneratedTopics] = useState([]);
   const [course_id, setCourseId] = useState("2")
   const topics = ["topic1", "topic2", "topic3", "topic4", "topic5", "topic6", "topic7"]
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = () => {
     if (selectedOption === "uploadedDocuments") {
@@ -32,6 +34,8 @@ export default function Wizard({handleCourseCreation}) {
   };
 
   const createCourseWithDocuments = async () => {
+    setIsLoading(true)
+
     const newCourseData = new FormData();
 
     newCourseData.append('uid', "123");
@@ -48,6 +52,8 @@ export default function Wizard({handleCourseCreation}) {
     newCourseData.forEach((value, key) => {
       console.log(key, value);
     });
+    await sleep(2000)
+
     setPage(4)
     try {
       const response = await axios.post('/api/course_config/create/create_course_topics', newCourseData, {
@@ -60,9 +66,12 @@ export default function Wizard({handleCourseCreation}) {
     } catch (error) {
       console.error('File upload failed:', error.message);
     }
+
+    setIsLoading(false)
   }
 
   const createCourseWithSearch = async () => {
+    setIsLoading(true)
     const newCourseData = new FormData();
 
     newCourseData.append('uid', "123");
@@ -75,6 +84,7 @@ export default function Wizard({handleCourseCreation}) {
     // newCourseData.forEach((value, key) => {
     //   console.log(key, value);
     // });
+    await sleep(2000)
     setPage(4)
     try {
       const response = await axios.post('/api/course_config/create/create_course_topics', newCourseData, {
@@ -84,6 +94,8 @@ export default function Wizard({handleCourseCreation}) {
     } catch (error) {
       console.error('File upload failed:', error.message);
     }
+
+    setIsLoading(false)
   }
 
   const setCourseTopics = async () => {
@@ -143,6 +155,8 @@ export default function Wizard({handleCourseCreation}) {
     setSelectedTopics(newSelectedTopics);
   };
 
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+
   // useEffect(() => {
   //   console.log(files)
   // }, [files])
@@ -170,6 +184,7 @@ export default function Wizard({handleCourseCreation}) {
     >
       {(close) => (
         <div className="bg-white h-wizard rounded-t-lg flex flex-col">
+          <LoadingScreen isLoading={isLoading}/>
           <div className="w-full flex flex-row justify-between">
             <h1 className="text-blue-900 text-xl font-semibold mt-2 ml-4">Course Creation</h1>
             <button onClick={() => {
