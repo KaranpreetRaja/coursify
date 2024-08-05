@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Topic from "../topic";
 
 export default function CourseInfoEntry({ visibility, onChange }) {
   const [course_name, setCourseName] = useState('');

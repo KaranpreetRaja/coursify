@@ -18,6 +18,7 @@ export default function Wizard({handleCourseCreation}) {
   const session_id = window.localStorage.getItem('session_id');
   const uid = window.localStorage.getItem('uid');
   const [selectedTopics, setSelectedTopics] = useState([]);
+  const [generatedTopics, setGeneratedTopics] = useState([]);
   const [course_id, setCourseId] = useState("2")
   const topics = ["topic1", "topic2", "topic3", "topic4", "topic5", "topic6", "topic7"]
 
@@ -91,12 +92,12 @@ export default function Wizard({handleCourseCreation}) {
     courseTopics.append('uid', "123");
     courseTopics.append('session_id', "235");
     courseTopics.append('course_id', course_id)
-    courseTopics.append('topics', topics)
+    courseTopics.append('topics', selectedTopics)
 
     courseTopics.forEach((value, key) => {
       console.log(key, value);
     });
-    close();
+
     try {
       const response = await axios.post('/api/course_config/create/set_course_topics', courseTopics);
       handleCourseCreation(course_id)
