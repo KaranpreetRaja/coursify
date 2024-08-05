@@ -1,6 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+import json
+
+from common.comms import request_service_with_response
 
 course_get_router = APIRouter()
+
 
 '''
 HTTP GET /api/course_config/get/get_course
@@ -40,22 +44,25 @@ async def get_course(
     session_id: str,
     course_id: str
     ):
+    try:
+        print(f"Request received: Getting course {course_id}")
 
-    print("Getting course")
-    print(f"COURSE ID\n: {course_id} \nUID\n: {uid} \nSESSION ID\n: {session_id} ") 
+        payload = {
+            "action": "get_course",
+            "course_id": course_id
+        }
 
-    return {
-        "course_name": "course 1",
-        "course_description": "This is course 1",
-        "Lessons": [
-            {
-                "lesson_id": "lesson_1",
-                "lesson_name": "lesson 1",
-                "lesson_description": "This is lesson 1",
-                "lesson_loaded": "true"
-            }
-        ]
-    }
+        response = request_service_with_response("course_db", payload)
+
+        if response["status"] == "error":
+            raise HTTPException(status_code=400, detail=response["message"])
+
+        return json.dump(response["course_data"])
+    
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
 
     
 
@@ -98,8 +105,6 @@ Response Body:
         ...
     ]
 
-
-
 }
 
 Error Body:
@@ -114,40 +119,21 @@ async def get_lesson(
     course_id: str,
     lesson_id: str
     ):
+    try:
+        payload = {
+            "action": "get_lesson",
+            "lesson_id": lesson_id
+        }
 
-    print("Getting lesson")
-    print(f"COURSE ID\n: {course_id} \nLESSON ID\n: {lesson_id} \nUID\n: {uid} \nSESSION ID\n: {session_id} ") 
+        response = request_service_with_response("lesson_db", payload)
 
-    return {
-        "lesson_name": "lesson 1",
-        "lesson_description": "This is lesson 1",
-        "lesson_loaded": "true",
-        "quiz_loaded": "true",
-        "questions": [
-            {
-                "question_type": "multiple_choice",
-                "question": "What is the powerhouse of the cell?",
-                "options": [
-                    "Mitochondria",
-                    "Nucleus",
-                    "Ribosome",
-                    "Golgi Apparatus"
-                ],
-                "answer": "Mitochondria"
-            }
-        ],
-        "material": """
-# Lesson 1
+        if response["status"] == "error":
+            raise HTTPException(status_code=400, detail=response["message"])
 
-## Introduction
-This is the introduction to lesson 1
+        return json.dump(response["lesson_data"])
 
-## Body
-This is the body of lesson 1
-"""
-    }
- 
-
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 '''
 GET /api/course_config/get/get_quiz
@@ -196,26 +182,21 @@ async def get_quiz(
     lesson_id: str
     ):
 
-    print("Getting quiz")
-    print(f"COURSE ID\n: {course_id} \nLESSON ID\n: {lesson_id} \nUID\n: {uid} \nSESSION ID\n: {session_id} ")
+    try:
+        payload = {
+            "action": "get_quiz",
+            "lesson_id": lesson_id
+        }
 
-    return {
-        "lesson_name": "lesson 1",
-        "quiz_loaded": "true",
-        "questions": [
-            {
-                "question_type": "multiple_choice",
-                "question": "What is the powerhouse of the cell?",
-                "options": [
-                    "Mitochondria",
-                    "Nucleus",
-                    "Ribosome",
-                    "Golgi Apparatus"
-                ],
-                "answer": "Mitochondria"
-            }
-        ]
-    }
+        response = request_service_with_response("lesson_db", payload)
+
+        if response["status"] == "error":
+            raise HTTPException(status_code=400, detail=response["message"])
+
+        return json.dump(response["quiz_data"])
+
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e)) 
 
 
 '''
@@ -251,18 +232,24 @@ async def get_all_courses_user(
     session_id: str
     ):
 
-    print("Getting all courses user")
-    print(f"UID\n: {uid} \nSESSION ID\n: {session_id} ") 
+    try:
+        print("Getting all courses user")
+        print(f"UID\n: {uid} \nSESSION ID\n: {session_id} ") 
 
-    return {
-        "courses": [
-            {
-                "course_id": "string",
-                "course_name": "string",
-                "course_description": "string",
-            }
-        ]
-    }
+        payload = {
+            "action": "get_courses_by_author",
+            "uid": uid
+        }
+
+        response = request_service_with_response("course_db", payload)
+
+        if response["status"] == "error":
+            raise HTTPException(status_code=400, detail=response["message"])
+
+        return json.dump(response["courses"])
+    
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 '''
@@ -337,12 +324,21 @@ async def get_lesson_loaded(
     lesson_id: str
     ):
 
-    print("Getting lesson loaded")
-    print(f"COURSE ID\n: {course_id} \nLESSON ID\n: {lesson_id} \nUID\n: {uid} \nSESSION ID\n: {session_id} ") 
+    try:
+        payload = {
+            "action": "get_lesson_loaded",
+            "lesson_id": lesson_id
+        }
 
-    return {
-        "lesson_loaded": "true"
-    }
+        response = request_service_with_response("lesson_db", payload)
+
+        if response["status"] == "error":
+            raise HTTPException(status_code=400, detail=response["message"])
+
+        return json.dump(response["lesson_loaded"])
+    
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 '''
 HTTP GET /api/course_config/get/get_quiz_loaded
@@ -367,3 +363,27 @@ Error Body:
     "detail": "string"
 }
 '''
+@course_get_router.get("/get_quiz_loaded")
+async def get_quiz_loaded(
+    uid: str,
+    session_id: str,
+    course_id: str,
+    lesson_id: str
+    ):
+
+    try:
+        payload = {
+            "action": "get_quiz_loaded",
+            "lesson_id": lesson_id
+        }
+
+        response = request_service_with_response("lesson_db", payload)
+
+        if response["status"] == "error":
+            raise HTTPException(status_code=400, detail=response["message"])
+
+        return json.dump(response["quiz_loaded"])
+    
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    

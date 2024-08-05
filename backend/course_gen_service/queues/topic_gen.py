@@ -79,97 +79,117 @@ def create_lesson_topics(text_list):
 
  
 def handle_topic_requests(data):
-    uid = data["uid"]
-    action = data["action"]
-   
-    if action == "create_course_topics":
-        course_name = data["course_name"]
-        course_description = data["course_description"]
-        pdf_material = data["pdf_material"]
+    try:
+        uid = data["uid"]
+        action = data["action"]
+    
+        if action == "create_course_topics":
+            course_name = data["course_name"]
+            course_description = data["course_description"]
+            pdf_material = data["pdf_material"]
 
-        # Stage 1: Segment the PDF material into topics
+            # Stage 1: Segment the PDF material into topics
 
-        text = pdf_material.replace("\n", " ")
-        text = re.sub(r'\s{2,}', ' ', text)
+            text = pdf_material.replace("\n", " ")
+            text = re.sub(r'\s{2,}', ' ', text)
 
-        if len(text) > 4000:
-            text_list = [text[i:i+4000] for i in range(0, len(text), 4000)]
+            if len(text) > 4000:
+                text_list = [text[i:i+4000] for i in range(0, len(text), 4000)]
 
-        # response = [{'topic_name': 'topic explanation'}]
-        response = create_lesson_topics(text_list)
+            # response = [{'topic_name': 'topic explanation'}]
+            response = create_lesson_topics(text_list)
 
-        json_strings = [resp.choices[0].message.content.replace("User:", "") for resp in response]
+            json_strings = [resp.choices[0].message.content.replace("User:", "") for resp in response]
 
-        all_lessons = []
+            all_lessons = []
 
-        # Iterate through each JSON string, fix the formatting, parse it, and extend the all_lessons list
-        for json_str in json_strings:
-            try:
-                fixed_json_str = fix_json_string(json_str)
-                lessons = json.loads(fixed_json_str)
-                all_lessons.extend(lessons)
-            except json.JSONDecodeError as e:
-                print(f"Error decoding JSON: {e}")
+            # Iterate through each JSON string, fix the formatting, parse it, and extend the all_lessons list
+            for json_str in json_strings:
+                try:
+                    fixed_json_str = fix_json_string(json_str)
+                    lessons = json.loads(fixed_json_str)
+                    all_lessons.extend(lessons)
+                except json.JSONDecodeError as e:
+                    print(f"Error decoding JSON: {e}")
 
-        # Merge the dictionaries into a single dictionary
-        lesson_topics = {lesson['topic']: lesson['explanation'] for lesson in all_lessons}
-
-
-        # Stage 2: Create course in database
-        response = create_course(uid, course_name, course_description, pdf_material, lesson_topics)
+            # Merge the dictionaries into a single dictionary
+            lesson_topics = {lesson['topic']: lesson['explanation'] for lesson in all_lessons}
 
 
+            # Stage 2: Create course in database
+            response = create_course(uid, course_name, course_description, pdf_material, lesson_topics)
+
+            if response["status"] == "error":
+                return {
+                    "status": "error",
+                    "message": response["message"]
+                }
+                
+            
+            return {
+                "course_id": response["course_id"],
+                "topics": all_lessons
+            }
+
+        elif action == "set_topics":
+            course_id = data["course_id"]
+            topics = data["topics"]
+
+            # Stage 1: create lessons in the database
+            lessons = []
+            for topic in topics:
+                lesson_name = topic["topic"]
+                lesson_explanation = topic["explanation"]
+
+                data = {
+                    "action": "create_lesson",
+                    "lesson_name": lesson_name,
+                    "lesson_description": lesson_explanation
+                }
+                response = request_service_with_response("lesson_db", data)
+                lesson_id = response["lesson_id"]
+                lessons.append({
+                    "lesson_id": lesson_id,
+                    "lesson_name": lesson_name,
+                    "lesson_explanation": lesson_explanation
+                })
+
+            # Stage 2: add lessons to course in the database
+            data = {
+                "action": "add_lessons_to_course",
+                "course_id": course_id,
+                "lessons": lessons
+            }
+
+            request_service_with_response("course_db", data)
+
+
+            # Stage 3: use `lesson_gen` queue to generate lessons for each topic
+            for topic in topics:
+                lesson_id = topic["topic_id"]
+                lesson_name = topic["topic"]
+                lesson_explanation = topic["explanation"]
+
+                data = {
+                    "action": "generate_lessons",
+                    "lesson_id": lesson_id,
+                    "lesson_name": lesson_name,
+                    "lesson_explanation": lesson_explanation
+                }
+                request_service("lesson_gen", data)
+
+            return {
+                "status": "success",
+                "message": "Lessons are being generated"
+            }
+
+    
+    except Exception as e:
+        print(f"Error handling topic request: {str(e)}")
         return {
-            "course_id": response["course_id"],
-            "topics": all_lessons
+            "status": "error",
+            "message": f"Error handling topic request {str(e)}"
         }
-
-    elif action == "set_topics":
-        course_id = data["course_id"]
-        topics = data["topics"]
-
-        # Stage 1: create lessons in the database
-        lessons = []
-        for topic in topics:
-            lesson_name = topic["topic"]
-            lesson_explanation = topic["explanation"]
-
-            data = {
-                "action": "create_lesson",
-                "lesson_name": lesson_name,
-                "lesson_description": lesson_explanation
-            }
-            response = request_service_with_response("lesson_db", data)
-            lesson_id = response["lesson_id"]
-            lessons.append({
-                "lesson_id": lesson_id,
-                "lesson_name": lesson_name,
-                "lesson_explanation": lesson_explanation
-            })
-
-        # Stage 2: add lessons to course in the database
-        data = {
-            "action": "add_lessons_to_course",
-            "course_id": course_id,
-            "lessons": lessons
-        }
-
-        request_service_with_response("course_db", data)
-
-
-        # Stage 3: use `lesson_gen` queue to generate lessons for each topic
-        for topic in topics:
-            lesson_id = topic["topic_id"]
-            lesson_name = topic["topic"]
-            lesson_explanation = topic["explanation"]
-
-            data = {
-                "action": "generate_lessons",
-                "lesson_id": lesson_id,
-                "lesson_name": lesson_name,
-                "lesson_explanation": lesson_explanation
-            }
-            request_service("lesson_gen", data)
 
 
 def start_topic_gen_consumer():
