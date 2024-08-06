@@ -133,14 +133,15 @@ def handle_topic_requests(data):
             }
 
         elif action == "set_topics":
+            print("Came here")
             course_id = data["course_id"]
             topics = data["topics"]
 
             # Stage 1: create lessons in the database
             lessons = []
-            for topic in topics:
-                lesson_name = topic["topic"]
-                lesson_explanation = topic["explanation"]
+            for lesson in topics:
+                lesson_name = lesson["topic"]
+                lesson_explanation = lesson["explanation"]
 
                 data = {
                     "action": "create_lesson",
@@ -166,10 +167,10 @@ def handle_topic_requests(data):
 
 
             # Stage 3: use `lesson_gen` queue to generate lessons for each topic
-            for topic in topics:
-                lesson_id = topic["topic_id"]
-                lesson_name = topic["topic"]
-                lesson_explanation = topic["explanation"]
+            for lesson in lessons:
+                lesson_id = lesson["lesson_id"]
+                lesson_name = lesson["lesson_name"]
+                lesson_explanation = lesson["lesson_explanation"]
 
                 data = {
                     "action": "generate_lessons",
