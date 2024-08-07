@@ -7,6 +7,11 @@ from typing import List, Dict
 import sys
 import os
 
+# adds top-level project directory to the sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
+from common.comms import request_service_with_response
+
 from ai71 import AI71
 from dotenv import load_dotenv
 
@@ -35,7 +40,7 @@ async def use_session(session_id: str, question: str):
     return JSONResponse({"message": "Question added to session"})
 
 @chat_bot_router.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket, session_id: str):
+async def websocket_endpoint(websocket: WebSocket, session_id: str, lesson_id: str):
     await websocket.accept()
 
     if session_id not in sessions:
@@ -48,8 +53,14 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
 
         client = AI71(api_key)
 
+        lesson_payload = {
+            "action": "get_lesson",
+            "lesson_id": lesson_id
+        }
+
+        lesson_content = request_service_with_response("lesson_db", lesson_payload)["lesson_material"]
+
         #lesson content
-        lesson_content = GET_LESSON_CONTENT_FOR_WHICH_CHATBOT_IS_BEING_USED
         messages = [
                 {"role": "system", "content": "You are a helpful teacher."},
                 {"role": "user", "content": f"Answer the questions based to the text: {lesson_content}. Answer in great detail, with proper examples."},
