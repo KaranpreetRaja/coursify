@@ -7,8 +7,12 @@ export default function Home(){
             <Navbar/>
             <div className="text-black">
                 <div className="hero-section">
-                    <div className="hero-content">
-                        <h1 className="hero-text">Craft Engaging <span className='highlight'>Courses</span> Effortlessly and Integrate Them into Your Learning Experience</h1>
+                    <div className="hero-content flex flex-col">
+                        <div>
+                        <h1 className="hero-text">Craft Engaging <span className='highlight'>Courses</span> Effortlessly and</h1> 
+                        <h1 className="hero-text">Integrate Them into Your Learning</h1>
+                        <h1 className="hero-text">Experience</h1>
+                        </div>
                         <Link to="/signup" className="text-black font-bold text-xl">
                             <button className='hero-btn hover:bg-blue-700 transition ease-in-out duration-300'>Get started</button>
                         </Link>

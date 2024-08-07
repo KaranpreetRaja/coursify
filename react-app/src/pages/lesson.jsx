@@ -6,6 +6,7 @@ import Sidebar from '../components/sidebar';
 import LessonNavbar from '../components/lessonNavbar';
 import { Link } from "react-router-dom";
 import Quiz from '../components/quiz';
+import Chatbot from '../components/chatbot';
 
 export default function Lesson() {
     const { lesson_id, course_id } = useParams();
@@ -77,7 +78,7 @@ export default function Lesson() {
                     </div>
                     {lessonData.lesson_loaded && lessonData.material ? (
                         <div className='px-4 flex flex-col items-start'>
-                            <div className=''>
+                            <div className='bg-white shadow-md rounded-lg p-6 mb-4 w-full flex flex-col'>
                                 <h2 className='text-2xl font-semibold mb-4'>Lesson Material</h2>
                                 <p>{lessonData.material}</p>
                             </div>
@@ -97,20 +98,22 @@ export default function Lesson() {
                     )
                     }
 
-                    <div className="flex justify-between w-full rounded-t-lg px-4 pb-4 mt-auto text-2xl">
+                    <div className="flex justify-between w-3/4 rounded-t-lg px-4 pb-4 mt-auto text-2xl">
                         <Link
                             to={lesson_id <= 1
                                 ? ''
                                 : `/course/${uid}/${course_id}/lesson/${Number(lesson_id) - 1}`}
-                            className='bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring focus:border-blue-300'>
+                            className='flex justify-center items-center bg-blue-600 text-white px-6 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring focus:border-blue-300'>
                             Back
                         </Link>
-                        <Quiz course_id={course_id} lesson_id={lesson_id} />
+                        <Quiz course_id={course_id} lesson_id={lesson_id} />        
                         <Link
                             to={`/course/${uid}/${course_id}/lesson/${Number(lesson_id) + 1}`}
-                            className="bg-blue-800 text-white px-6 py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring focus:border-blue-300">
+                            className="flex justify-center items-center bg-blue-800 text-white px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring focus:border-blue-300">
                             Next
                         </Link>
+
+                        <Chatbot context={lessonData.material}/>
                     </div>
 
                 </div>
