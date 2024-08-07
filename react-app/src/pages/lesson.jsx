@@ -16,16 +16,12 @@ export default function Lesson() {
         lesson_name: '',
         lesson_description: '',
         lesson_loaded: false,
-        material: null
+        lesson_material: null
     });
-    // const [lessonData, setLessonData] = useState({
-    //     lesson_name: 'Introduction to Machine Learning',
-    //     lesson_description: 'This lesson covers the basics of machine learning including supervised and unsupervised learning.',
-    //     lesson_loaded: true,
-    //     material: 'E = mc^2'
-    // });
 
     useEffect(() => {
+        let timeoutId;
+
         const fetchLesson = async () => {
             try {
                 const response = await axios.get("http://localhost:8000/api/course_config/get/get_lesson", {
@@ -41,9 +37,9 @@ export default function Lesson() {
                     setLessonData(JSON.parse(response.data));
                 }
 
-                // if (!response.data.lesson_loaded) {
-                //     setTimeout(fetchLesson, 3000);
-                // }
+                if (!response.data.lesson_loaded) {
+                    timeoutId = setTimeout(fetchLesson, 3000);
+                }
 
             } catch (error) {
                 console.error('Failed to fetch lesson:', error);
@@ -51,7 +47,13 @@ export default function Lesson() {
         };
 
         fetchLesson();
-    }, []);
+
+        return () => {
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+            }
+        };
+    }, [uid, session_id, course_id, lesson_id]);
 
     return (
         <div>
@@ -78,11 +80,11 @@ export default function Lesson() {
                             </p>
                         </div>
                     </div>
-                    {lessonData.lesson_loaded && lessonData.material ? (
+                    {lessonData.lesson_loaded && lessonData.lesson_material ? (
                         <div className='px-4 flex flex-col items-start'>
                             <div className='bg-white shadow-md rounded-lg p-6 mb-4 w-full flex flex-col'>
                                 <h2 className='text-2xl font-semibold mb-4'>Lesson Material</h2>
-                                <p>{lessonData.material}</p>
+                                <p>{lessonData.lesson_material}</p>
                             </div>
                         </div>
                     ) : (
@@ -115,7 +117,7 @@ export default function Lesson() {
                             Next
                         </Link>
 
-                        <Chatbot context={lessonData.material}/>
+                        <Chatbot context={lessonData.lesson_material}/>
                     </div>
 
                 </div>

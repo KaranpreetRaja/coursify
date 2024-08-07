@@ -2,12 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-export default function LessonCard({ lesson_id, lesson_name, lesson_description,  }) {
+export default function LessonCard({ lesson_id, lesson_name, lesson_description, course_id}) {
     const navigate = useNavigate();
     const uid = window.localStorage.getItem('uid');
     const session_id = window.localStorage.getItem('session_id');
     const [lessonLoaded, setLessonLoaded] = useState(false);
-    const course_id = "010"
 
     const checkLessonLoaded = async () => {
         try {

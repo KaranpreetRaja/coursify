@@ -5,57 +5,27 @@ import axios from 'axios';
 export default function LessonNavbar({ course_id, current_lesson_id }) {
     const uid = window.localStorage.getItem('uid');
     const session_id = window.localStorage.getItem('session_id');
-    const [lessons, setLessons] = useState([
-        {
-            lesson_id: '1',
-            lesson_name: 'Introduction to Machine Learning',
-            lesson_description: 'Overview of machine learning concepts and applications.',
-            lesson_loaded: true
-        },
-        {
-            lesson_id: '2',
-            lesson_name: 'Supervised Learning',
-            lesson_description: 'Deep dive into supervised learning techniques and algorithms.',
-            lesson_loaded: true
-        },
-        {
-            lesson_id: '3',
-            lesson_name: 'Unsupervised Learning',
-            lesson_description: 'Understanding clustering, association, and dimensionality reduction.',
-            lesson_loaded: false
-        },
-        {
-            lesson_id: '4',
-            lesson_name: 'Reinforcement Learning',
-            lesson_description: 'Basics of reinforcement learning and its applications.',
-            lesson_loaded: true
-        },
-        {
-            lesson_id: '5',
-            lesson_name: 'Neural Networks and Deep Learning',
-            lesson_description: 'Introduction to neural networks and deep learning architectures.',
-            lesson_loaded: false
-        }
-    ]);
+    const [lessons, setLessons] = useState([]);
 
-    // useEffect(() => {
-    //     const fetchLessons = async () => {
-    //         try {
-    //             const response = await axios.get("/api/course_config/get/get_course", {
-    //                 params: {
-    //                     uid,
-    //                     session_id,
-    //                     course_id
-    //                 }
-    //             });
-    //             setLessons(response.data.Lessons);
-    //         } catch (error) {
-    //             console.error('Failed to fetch lessons:', error.message);
-    //         }
-    //     };
+    useEffect(() => {
+        const fetchLessons = async () => {
+            try {
+                const response = await axios.get("http://localhost:8000/api/course_config/get/get_course", {
+                    params: {
+                        uid,
+                        session_id,
+                        course_id
+                    }
+                });
+                const data = JSON.parse(response.data)
+                setLessons(data.lessons);
+            } catch (error) {
+                console.error('Failed to fetch lessons:', error.message);
+            }
+        };
 
-    //     fetchLessons();
-    // }, [uid, session_id, course_id]);
+        fetchLessons();
+    }, [uid, session_id, course_id]);
 
     return (
         <div className='bg-gray-200 w-96 p-4'>
