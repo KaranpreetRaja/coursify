@@ -199,7 +199,10 @@ async def get_quiz(
         if response["status"] == "error":
             raise HTTPException(status_code=400, detail=f"Error getting quiz: {response['message']}")
 
-        return json.dumps(response["quiz"])
+        return {
+            "quiz_loaded": response["quiz_loaded"],
+            "questions": json.dumps(response["quiz"])
+        }
 
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e)) 
