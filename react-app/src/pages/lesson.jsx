@@ -38,12 +38,12 @@ export default function Lesson() {
                 });
 
                 if (response.data) {
-                    setLessonData(response.data);
+                    setLessonData(JSON.parse(response.data));
                 }
 
-                if (!response.data.lesson_loaded) {
-                    setTimeout(fetchLesson, 3000);
-                }
+                // if (!response.data.lesson_loaded) {
+                //     setTimeout(fetchLesson, 3000);
+                // }
 
             } catch (error) {
                 console.error('Failed to fetch lesson:', error);
