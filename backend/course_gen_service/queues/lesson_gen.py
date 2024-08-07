@@ -93,6 +93,43 @@ def generate_lesson(lesson_id: str, lesson_name: str, lesson_explanation: str) -
             "status": "error",
             "message": lesson_db_response["message"]
         }
+    
+    print(f"Lesson db: Lesson material added to lesson with id: {lesson_id}")
+    
+    # Stage 3: Generate quiz for the lesson
+    data = {
+        "action": "generate_quiz",
+        "lesson_id": lesson_id,
+        "lesson_name": lesson_name,
+        "lesson_material": lesson_material
+    }
+
+    quiz_gen_response = request_service_with_response("quiz_gen", data)
+
+
+    if quiz_gen_response["status"] == "error":
+        return {
+            "status": "error",
+            "message": f"Lesson generated successfully but quiz generation failed: {quiz_gen_response['message']}"
+        }
+    
+    print(f"lesson_gen: Quiz generated: {quiz_gen_response['quiz']}")
+
+    # Stage 4: Save the quiz to the database
+    data = {
+        "action": "add_quiz",
+        "lesson_id": lesson_id,
+        "quiz": quiz_gen_response["quiz"]
+    }   
+
+    quiz_db_response = request_service_with_response("lesson_db", data) 
+
+
+    if lesson_db_response["status"] == "error":
+        return {
+            "status": "error",
+            "message": f"Lesson and quiz generated successfully but quiz saving failed: {quiz_db_response['message']}"
+        }
 
     print(f"Lesson db: Lesson saved to db: {lesson_db_response}")
 

@@ -154,19 +154,25 @@ Response Body:
     "quiz_loaded": "bool",
 
     // If quiz_loaded is false, questions will be empty
-    "questions": [
-        {
-            "question_type": "string", // "multiple_choice" or "true_false"
-            
-            // If question_type is "true_false", options will be empty
-            "options": [
-                "string", "string", "string", ...
-            ],
-            "question": "string",
-            "answer": "string"
-        },
-        ...
-    ]
+    "questions":{
+        "Multiple Choice Questions": [
+            {
+                "question": "string",
+                "options": [
+                    "string", "string", "string", ...
+                ],
+                "answer": "string"
+            },
+            ...
+        ],
+        "True/False Questions": [
+            {
+                "question": "string",
+                "answer": "string"
+            },
+            ...
+        ]
+    }
 }
 
 Error Body:
@@ -193,7 +199,7 @@ async def get_quiz(
         if response["status"] == "error":
             raise HTTPException(status_code=400, detail=response["message"])
 
-        return json.dumps(response["quiz_data"])
+        return json.dumps(response["questions"])
 
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e)) 

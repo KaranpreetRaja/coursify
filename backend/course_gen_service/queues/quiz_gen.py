@@ -133,18 +133,30 @@ def convert_to_json(input_string):
     return result
 
 def handle_quiz_gen_requests(data):
-    action = data["action"]
-    lesson_id = data["lesson_id"]
-    lesson_name = data["lesson_name"]
-    lesson_explanation = data["lesson_explanation"]
-    lesson_text = data["lesson_material"]
+    print(f"Handling quiz gen requests with action: {data['action']} and lesson_id: {data['lesson_id']}")
+    try:
+        action = data["action"]
+        lesson_id = data["lesson_id"]
+        lesson_name = data["lesson_name"]
+        lesson_material = data["lesson_material"]
 
-    if action == "generate_quiz":
-        response = generate_quiz(lesson_name, lesson_explanation)
-        json_string = response.choices[0].message.content.replace("User:", "")
-        quiz = convert_to_json(json_string)
+        if action == "generate_quiz":
+            response = generate_quiz(lesson_name, lesson_material)
+            json_string = response.choices[0].message.content.replace("User:", "")
+            quiz = convert_to_json(json_string)
 
-        return quiz
+
+            return {
+                "status": "success",
+                "message": "Quiz generated",
+                "quiz": quiz
+            }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": str(e)
+        }
     
 
-start_consuming_service("quiz_gen", handle_quiz_gen_requests)
+def start_quiz_gen_consumer():
+    start_consuming_service("quiz_gen", handle_quiz_gen_requests)
