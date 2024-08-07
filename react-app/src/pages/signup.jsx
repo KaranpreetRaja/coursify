@@ -3,10 +3,11 @@ import { FcGoogle } from 'react-icons/fc'
 import Navbar from '../components/navbar';
 import { useNavigate } from 'react-router-dom';
 import { GiSpellBook } from "react-icons/gi";
-
+import { useState } from 'react';
 
 export default function Signup() {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const [errorMessage, setErrorMessage] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -15,31 +16,29 @@ export default function Signup() {
         const password = e.target.elements.password.value;
         const first_name = e.target.elements.firstName.value;
         const last_name = e.target.elements.lastName.value;
-
-        console.log(email);
-        console.log(password);
-        console.log(first_name);
-        console.log(last_name);
-
+        console.log(password)
         try {
-            const response = await axios.post('/api/db/user/register_user', {
+            const response = await axios.post('http://localhost:8000/api/user/register_user', {
                 email,
                 password,
                 first_name,
                 last_name
             });
-
+            console.log(response)
             const uid = response.data.uid;
-            const session_id = reponse.data.session_id;
-
+            const session_id = response.data.session_id;
             localStorage.setItem('uid', uid);
             localStorage.setItem('session_id', session_id);
 
-            console.log('Login successful! uid:', uid, "session_id: ", session_id);
+            console.log('Registration successful! uid:', uid, "session_id: ", session_id);
             navigate(`/dashboard/${uid}`);
-
         } catch (error) {
-            console.error('Register failed:', error.message);
+            if (error.response && error.response.data && error.response.data.detail) {
+                setErrorMessage(error.response.data.detail);
+            } else {
+                setErrorMessage('An unexpected error occurred. Please try again.');
+            }
+            console.error('Register failed:', error);
         }
     }
 
@@ -101,16 +100,12 @@ export default function Signup() {
                     <button className="btn-submit bg-blue-500 hover:bg-blue-700 transition ease-in-out duration-300 mt-3" type="submit">
                         Signup
                     </button>
-                    {/* <p className="text-sm font-semibold text-center m-4">
-                        <span className="border-b w-full text-center border-gray-300 py-1">
-                            Or
-                        </span>
-                    </p> */}
+                    {errorMessage && (
+                        <div className="mt-3 text-red-500">
+                            {errorMessage}
+                        </div>
+                    )}
                 </form>
-                {/* <button className="h-12 bg-white border-slate-500 border-2 text-black font-bold py-3 px-10 rounded inline-flex items-center">
-                    <FcGoogle size={40} />
-                    <span className="ml-4">Continue with Google</span>
-                </button> */}
             </div>
         </div>
     )

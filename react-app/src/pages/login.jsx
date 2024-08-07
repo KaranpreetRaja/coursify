@@ -3,10 +3,12 @@ import { FcGoogle } from 'react-icons/fc'
 import Navbar from '../components/navbar';
 import { useNavigate } from 'react-router-dom';
 import { GiSpellBook } from "react-icons/gi";
+import { useState } from 'react';
 
 export default function Login(){
     const navigate = useNavigate()
-
+    const [errorMessage, setErrorMessage] = useState(null);
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -18,12 +20,14 @@ export default function Login(){
         
 
         try {
-            const response = await axios.put('/api/db/user/login_user', {
-                email,
-                password
+            const response = await axios.put('http://localhost:8000/api/user/login_user', null, {
+                params: {
+                    email,
+                    password
+                }
             });
             const uid = response.data.uid;
-            const session_id = reponse.data.session_id;
+            const session_id = response.data.session_id;
 
             localStorage.setItem('uid', uid);
             localStorage.setItem('session_id', session_id);
@@ -31,7 +35,12 @@ export default function Login(){
             console.log('Login successful! uid:', uid, "session_id: ", session_id);
             navigate(`/dashboard/${uid}`);
         } catch (error) {
-            console.error('Login failed:', error.message);
+            if (error.response && error.response.data && error.response.data.detail) {
+                setErrorMessage(error.response.data.detail);
+            } else {
+                setErrorMessage('An unexpected error occurred. Please try again.');
+            }
+            console.error('Register failed:', error);
         }
     }
 
@@ -70,6 +79,11 @@ export default function Login(){
                     <button className="btn-submit bg-blue-500 hover:bg-blue-700 transition ease-in-out duration-300 mt-3" type="submit">
                         Login
                     </button>
+                    {errorMessage && (
+                        <div className="mt-3 text-red-500">
+                            {errorMessage}
+                        </div>
+                    )}
                     {/* <p className="text-sm font-semibold text-center mt-4">
                         <span className="border-b w-full text-center border-gray-300 py-1">
                             Or
