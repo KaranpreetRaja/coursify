@@ -10,6 +10,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')
 from common.comms import start_consuming_service, request_service, request_service_with_response
 import logging
 import concurrent.futures
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -65,21 +66,42 @@ def create_lesson(topic, explanation):
             """},
         ],
     )
+    print(f"Lesson db: Lesson generated: {response.choices[0].message.content}")
     return response
 
 
 def generate_lesson(lesson_id: str, lesson_name: str, lesson_explanation: str) -> dict:
+    print(f"Ran generate_lesson() worker with lesson_id: {lesson_id}, lesson_name: {lesson_name}")
 
     # Stage 1: Generate lessons for each topic using the topic names and explinations
     response = create_lesson(lesson_name, lesson_explanation)
     lesson_material = response.choices[0].message.content
     # Stage 2: add generated lesson to existing document by sending it to lesson_db_queue
     data = {
-        "action": "add_material_to_lesson",
+        "action": "add_lesson_material",
         "lesson_id": lesson_id,
         "lesson_material": lesson_material
     }
-    return request_service_with_response("lesson_db", data)
+    print(f"Lesson db: Adding lesson material to lesson with id: {lesson_id}...")
+    lesson_db_response =  request_service_with_response("lesson_db", data)
+
+    print(f"\n\nLesson db: Lesson db response: {lesson_db_response}")
+
+    if lesson_db_response["status"] == "error":
+        return {
+            "status": "error",
+            "message": lesson_db_response["message"]
+        }
+
+    print(f"Lesson db: Lesson saved to db: {lesson_db_response}")
+
+    return json.dumps(
+        {
+            "status": "success",
+            "message": "Lesson generated successfully"
+        }
+    )
+
 
 
 def handle_lesson_gen_requests(data):
@@ -89,6 +111,7 @@ def handle_lesson_gen_requests(data):
     lesson_explanation = data["lesson_explanation"]
     
     if action == "generate_lessons":
+        print(f"Generating lessons for lesson {lesson_id} named {lesson_name}")
         logger.info(f"Generating lessons for lesson {lesson_id} named {lesson_name}")
         # create a sub-process to generate the lesson that runs asynchronously
         future = executor.submit(generate_lesson, lesson_id, lesson_name, lesson_explanation)
@@ -96,7 +119,7 @@ def handle_lesson_gen_requests(data):
         return
     
         
-executor = concurrent.futures.ProcessPoolExecutor(max_workers=4)
+executor = concurrent.futures.ProcessPoolExecutor(max_workers=1)
 
 def start_lesson_gen_consumer():
     start_consuming_service("lesson_gen", handle_lesson_gen_requests)
