@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
 
 export default function LessonNavbar({ course_id, current_lesson_id }) {
     const uid = window.localStorage.getItem('uid');
     const session_id = window.localStorage.getItem('session_id');
     const [lessons, setLessons] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchLessons = async () => {
@@ -33,14 +34,13 @@ export default function LessonNavbar({ course_id, current_lesson_id }) {
             <ul>
                 {lessons && lessons.map(lesson => (
                     <li key={lesson.lesson_id} className={`mb-6 px-2 ${lesson.lesson_id === current_lesson_id ? 'bg-blue-700 py-2  rounded-lg' : ''}`}>
-                        <Link 
-                            to={lesson.lesson_id === current_lesson_id 
-                                ? '' 
-                                : `/course/${uid}/${course_id}/lesson/${lesson.lesson_id}`} 
+                        <button
+                            onClick={() => navigate(`/course/${uid}/${course_id}/lesson/${lesson.lesson_id}`)}
                             className={`text-blue-500 font-semibold  ${lesson.lesson_id === current_lesson_id ? 'text-white' : 'hover:text-blue-700'}`}
+                            disabled={lesson.lesson_id === current_lesson_id}
                         >
                             {lesson.lesson_name}
-                        </Link>
+                        </button>
                     </li>
                 ))}
             </ul>
