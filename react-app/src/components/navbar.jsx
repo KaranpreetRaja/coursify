@@ -12,35 +12,37 @@ export default function Navbar() {
 
     const handleLogout = async () => {
         const session_id = window.localStorage.getItem('session_id');
+        setLoggedIn(false);
+        window.localStorage.removeItem('session_id');
+        navigate("/login");
+        // try {
+        //     const response = await axios.delete('http://localhost:8000/api/user/logout_user', {
+        //         params: { session_id }
+        //     });
 
-        try {
-            const response = await axios.delete('/api/user/logout_user', {
-                data: { session_id }
-            });
-
-            if (response.data.success) {
-                setLoggedIn(false);
-                window.localStorage.removeItem('session_id');
-                navigate("/login");
-            } else {
-                console.error('Logout failed:', response.data.detail);
-            }
-        } catch (error) {
-            console.error('Logout error:', error.message);
-        }
+        //     if (response.data.success) {
+        //         setLoggedIn(false);
+        //         window.localStorage.removeItem('session_id');
+        //         navigate("/login");
+        //     } else {
+        //         console.error('Logout failed:', response.data.detail);
+        //     }
+        // } catch (error) {
+        //     console.error('Logout error:', error);
+        // }
     };
 
     const userInitials = "AY";
 
-    // useEffect(() => {
-    //     const session_id = window.localStorage.getItem('session_id');
-    //     if (session_id == null) {
-    //         setLoggedIn(false)
-    //     }
-    //     else{
-    //         setLoggedIn(true)
-    //     }
-    // }, [])
+    useEffect(() => {
+        const session_id = window.localStorage.getItem('session_id');
+        if (session_id == null) {
+            setLoggedIn(false)
+        }
+        else{
+            setLoggedIn(true)
+        }
+    }, [])
 
     return (
         <nav className="flex justify-between items-center p-4 bg-white text-black">
