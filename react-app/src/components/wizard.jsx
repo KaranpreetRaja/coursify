@@ -20,8 +20,7 @@ export default function Wizard({handleCourseCreation}) {
   const uid = window.localStorage.getItem('uid');
   const [selectedTopics, setSelectedTopics] = useState([]);
   const [generatedTopics, setGeneratedTopics] = useState([]);
-  const [course_id, setCourseId] = useState("2")
-  const topics = ["topic1", "topic2", "topic3", "topic4", "topic5", "topic6", "topic7"]
+  const [course_id, setCourseId] = useState("")
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = () => {
@@ -38,8 +37,8 @@ export default function Wizard({handleCourseCreation}) {
 
     const newCourseData = new FormData();
 
-    newCourseData.append('uid', "123");
-    newCourseData.append('session_id', "235");
+    newCourseData.append('uid', uid);
+    newCourseData.append('session_id', session_id);
 
     for (const key in formData) {
       newCourseData.append(key, formData[key]);
@@ -49,22 +48,25 @@ export default function Wizard({handleCourseCreation}) {
       newCourseData.append('files', file, file.name);
     });
 
-    newCourseData.forEach((value, key) => {
-      console.log(key, value);
-    });
+    // newCourseData.forEach((value, key) => {
+    //   console.log(key, value);
+    // });
+    // console.log(selectedOption)
     await sleep(2000)
 
-    setPage(4)
     try {
-      const response = await axios.post('/api/course_config/create/create_course_topics', newCourseData, {
+      const response = await axios.post('http://localhost:8000/api/course_config/create/create_course_topics', newCourseData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
 
       console.log('Response:', response.data);
+      setCourseId(response.data.course_id)
+      setGeneratedTopics(response.data.topics)
+      setPage(4)
     } catch (error) {
-      console.error('File upload failed:', error.message);
+      console.error('File upload failed:', error);
     }
 
     setIsLoading(false)
@@ -74,8 +76,8 @@ export default function Wizard({handleCourseCreation}) {
     setIsLoading(true)
     const newCourseData = new FormData();
 
-    newCourseData.append('uid', "123");
-    newCourseData.append('session_id', "235");
+    newCourseData.append('uid', uid);
+    newCourseData.append('session_id', session_id);
 
     for (const key in formData) {
       newCourseData.append(key, formData[key]);
@@ -85,14 +87,16 @@ export default function Wizard({handleCourseCreation}) {
     //   console.log(key, value);
     // });
     await sleep(2000)
-    setPage(4)
+ 
     try {
-      const response = await axios.post('/api/course_config/create/create_course_topics', newCourseData, {
+      const response = await axios.post('http://localhost:8000/api/course_config/create/create_course_topics', newCourseData, {
       });
-
+      setPage(4)
+      setCourseId(response.data.course_id)
+      setGeneratedTopics(response.data.topics)
       console.log('Response:', response.data);
     } catch (error) {
-      console.error('File upload failed:', error.message);
+      console.error('File upload failed:', error);
     }
 
     setIsLoading(false)
@@ -101,21 +105,21 @@ export default function Wizard({handleCourseCreation}) {
   const setCourseTopics = async () => {
     const courseTopics = new FormData();
 
-    courseTopics.append('uid', "123");
-    courseTopics.append('session_id', "235");
+    courseTopics.append('uid', uid);
+    courseTopics.append('session_id', session_id);
     courseTopics.append('course_id', course_id)
-    courseTopics.append('topics', selectedTopics)
+    courseTopics.append('topics', JSON.stringify(selectedTopics))
 
     courseTopics.forEach((value, key) => {
       console.log(key, value);
     });
 
     try {
-      const response = await axios.post('/api/course_config/create/set_course_topics', courseTopics);
+      const response = await axios.post('http://localhost:8000/api/course_config/create/set_course_topics', courseTopics);
       handleCourseCreation(course_id)
       console.log('Response:', response.data);
     } catch (error) {
-      console.error('File upload failed:', error.message);
+      console.error('File upload failed:', error);
     }
   }
 
@@ -132,7 +136,7 @@ export default function Wizard({handleCourseCreation}) {
   }
 
   const handleBack = () => {
-    if (page !== 1 || page !== 4) {
+    if (page > 1 || page !== 4) {
       setPage((prevPage) => prevPage - 1)
     }
   }
@@ -165,9 +169,9 @@ export default function Wizard({handleCourseCreation}) {
   //   console.log(formData)
   // }, [formData])
 
-  // useEffect(() => {
-  //   console.log(selectedTopics)
-  // }, [selectedTopics])
+  useEffect(() => {
+    console.log(selectedTopics)
+  }, [selectedTopics])
 
   return (
     <Popup
@@ -199,7 +203,7 @@ export default function Wizard({handleCourseCreation}) {
           <CourseCreationOptions visibility={page === 1} onChange={handleCourseCreationOptionChange} />
           <CourseInfoEntry visibility={page === 2} onChange={handleCourseInfoEntry} />
           <FileUpload visibility={page === 3} onChange={handleFileUpload} />
-          <TopicSelection visibility={page === 4} topics={topics}
+          <TopicSelection visibility={page === 4} topics={generatedTopics}
             selectedTopics={selectedTopics}
             onTopicChange={handleTopicChange}
           />
@@ -219,8 +223,8 @@ export default function Wizard({handleCourseCreation}) {
                   }
                   else{
                     setCourseTopics();
-                    setPage(1)
-                    close();
+                    // setPage(1)
+                    // close();
                   }
                 }}
                 className="bg-blue-800 text-white px-6 py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring focus:border-blue-300">
