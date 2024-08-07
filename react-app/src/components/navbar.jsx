@@ -61,13 +61,13 @@ export default function Navbar() {
                     <div className="space-x-4">
                         <Link to={`/dashboard/${uid}`} className='hover:text-black text-gray-600 text-lg'>Dashboard</Link>
 
-                        <Avatar
+                        {/* <Avatar
                             name={userInitials}
                             size="50"
                             round
                             textSizeRatio={2}
                             color="#87CEEB"
-                        />
+                        /> */}
 
                         <button onClick={handleLogout} className="btn-signup hover:bg-blue-700 transition ease-in-out duration-300">Log out</button>
                     </div>

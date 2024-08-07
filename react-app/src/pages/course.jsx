@@ -56,6 +56,7 @@ export default function Course() {
                             lesson_id={lesson.lesson_id}
                             lesson_name={lesson.lesson_name}
                             lesson_description={lesson.lesson_explanation}
+                            course_id={course_id}
                         />
                     ))}
                 </div>
