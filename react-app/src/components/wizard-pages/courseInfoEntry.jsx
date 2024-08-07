@@ -33,7 +33,7 @@ export default function CourseInfoEntry({ visibility, onChange }) {
           </div>
 
           <p className="text-lg text-gray-600 mt-4 mb-4">
-              Please provide a brief description of your course (Optional):
+              Please provide a brief description of your course:
           </p>
           <textarea
               className="w-full border border-gray-300 p-2 rounded-md text-md max-h-20"
