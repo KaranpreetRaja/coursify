@@ -44,7 +44,8 @@ def handle_user_requests(data):
             
             # verify password
             try:
-                auth.verify_password(password)
+                stored_password = user["password"]  
+                auth.verify_password(stored_password, password)
             except Exception as e:
                 return {
                     "status": "error",
