@@ -81,6 +81,7 @@ def handle_lesson_db_requests(data):
             return {
                 "status": "success",
                 "message": "Quiz retrieved",
+                "quiz_loaded": lesson_data.to_dict()["quiz_loaded"],
                 "lesson_name": lesson_data.to_dict()["lesson_name"],
                 "quiz": lesson_data.to_dict()["questions"]
             }
