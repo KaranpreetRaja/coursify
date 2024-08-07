@@ -22,7 +22,9 @@ from queues.topic_gen import start_topic_gen_consumer
 topic_gen_consumer_process = multiprocessing.Process(target=start_topic_gen_consumer)
 processes.append(topic_gen_consumer_process)
 
-
+from queues.quiz_gen import start_quiz_gen_consumer
+quiz_gen_consumer_process = multiprocessing.Process(target=start_quiz_gen_consumer)
+processes.append(quiz_gen_consumer_process)
 
 # register signal handler
 signal.signal(signal.SIGINT, signal_handler)
