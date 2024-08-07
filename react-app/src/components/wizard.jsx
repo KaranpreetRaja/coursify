@@ -116,7 +116,7 @@ export default function Wizard({handleCourseCreation}) {
 
     try {
       const response = await axios.post('http://localhost:8000/api/course_config/create/set_course_topics', courseTopics);
-      handleCourseCreation(course_id)
+      handleCourseCreation(course_id, formData.course_name, formData.course_description)
       console.log('Response:', response.data);
     } catch (error) {
       console.error('File upload failed:', error);
@@ -223,8 +223,9 @@ export default function Wizard({handleCourseCreation}) {
                   }
                   else{
                     setCourseTopics();
-                    // setPage(1)
-                    // close();
+                    setPage(1)
+                    setSelectedTopics([]);
+                    close();
                   }
                 }}
                 className="bg-blue-800 text-white px-6 py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring focus:border-blue-300">
