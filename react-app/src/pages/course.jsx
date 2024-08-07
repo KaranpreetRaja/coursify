@@ -1,12 +1,14 @@
 import Navbar from '../components/navbar';
 import { Link, useParams } from "react-router-dom";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import LessonCard from '../components/lessonCard';
+import axios from 'axios';
 
 export default function Course() {
     const uid = window.localStorage.getItem('uid');
     const session_id = window.localStorage.getItem('session_id');
-    const course_id = useParams("course_id")
+    // const course_id = useParams("course_id")
+    const course_id = 1
     // const [courseData, setCourseData] = useState({
     //     course_name: '',
     //     course_description: '',
@@ -45,29 +47,31 @@ export default function Course() {
         ]
     });
 
-    // useEffect(() => {
-    //     const fetchLessons = async () => {
-    //         try {
-    //             const response = await axios.get("/api/course_config/get/get_course", {
-    //                 uid,
-    //                 session_id,
-    //                 course_id
-    //             });
-    //            setCourseData(response.data);
+    useEffect(() => {
+        const fetchLessons = async () => {
+            try {
+                const response = await axios.get("http://localhost:8000/api/course_config/get/get_course", {
+                    params: {
+                        uid,
+                        session_id,
+                        course_id
+                    }
+                });
+               setCourseData(response.data);
                 
-    //         } catch (error) {
-    //             console.error(error.message);
-    //         }
-    //     };
+            } catch (error) {
+                console.error(error);
+            }
+        };
 
-    //     fetchLessons();
-    // }, [uid, session_id]);
+        fetchLessons();
+    }, [uid, session_id]);
 
     return (
         <div>
             <Navbar />
             <div className='bg-gray-200 w-full flex flex-col'>
-                <div className='mb-4 bg-gradient-to-t from-blue-500 to-blue-900 w-full h-64 flex flex-col items-start py-6 px-8'>
+                <div className='mb-4 bg-gradient-to-t from-blue-500 to-blue-900 w-full flex flex-col items-start py-6 px-8'>
                     <div className='space-y-4 text-gray-100 font-medium text-md'>
                         <div className='flex flex-row space-x-3 items-center'>
                             <div className='h-11 w-4 bg-green-500'></div>
