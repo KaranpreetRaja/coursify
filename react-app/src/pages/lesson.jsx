@@ -12,44 +12,46 @@ export default function Lesson() {
     const { lesson_id, course_id } = useParams();
     const uid = window.localStorage.getItem('uid');
     const session_id = window.localStorage.getItem('session_id');
-    // const [lessonData, setLessonData] = useState({
-    //     lesson_name: '',
-    //     lesson_description: '',
-    //     lesson_loaded: false,
-    //     material: null
-    // });
     const [lessonData, setLessonData] = useState({
-        lesson_name: 'Introduction to Machine Learning',
-        lesson_description: 'This lesson covers the basics of machine learning including supervised and unsupervised learning.',
-        lesson_loaded: true,
-        material: 'E = mc^2'
+        lesson_name: '',
+        lesson_description: '',
+        lesson_loaded: false,
+        material: null
     });
+    // const [lessonData, setLessonData] = useState({
+    //     lesson_name: 'Introduction to Machine Learning',
+    //     lesson_description: 'This lesson covers the basics of machine learning including supervised and unsupervised learning.',
+    //     lesson_loaded: true,
+    //     material: 'E = mc^2'
+    // });
 
-    // useEffect(() => {
-    //     const fetchLesson = async () => {
-    //         try {
-    //             const response = await axios.get("/api/course_config/get/get_lesson", {
-    //                 uid,
-    //                 session_id,
-    //                 course_id,
-    //                 lesson_id
-    //             });
+    useEffect(() => {
+        const fetchLesson = async () => {
+            try {
+                const response = await axios.get("http://localhost:8000/api/course_config/get/get_lesson", {
+                    params: {
+                        uid,
+                        session_id,
+                        course_id,
+                        lesson_id
+                    }
+                });
 
-    //             if (response.data) {
-    //                 setLessonData(response.data);
-    //             }
+                if (response.data) {
+                    setLessonData(response.data);
+                }
 
-    //             if (!response.data.lesson_loaded) {
-    //                 setTimeout(fetchLesson, 3000);
-    //             }
+                if (!response.data.lesson_loaded) {
+                    setTimeout(fetchLesson, 3000);
+                }
 
-    //         } catch (error) {
-    //             console.error('Failed to fetch lesson:', error.message);
-    //         }
-    //     };
+            } catch (error) {
+                console.error('Failed to fetch lesson:', error);
+            }
+        };
 
-    //     fetchLesson();
-    // }, [uid, session_id, lesson_id]);
+        fetchLesson();
+    }, []);
 
     return (
         <div>
