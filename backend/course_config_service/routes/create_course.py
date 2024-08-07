@@ -4,6 +4,8 @@ from typing import List, Optional
 import sys
 import os
 import json
+import fitz
+import io
 
 # adds top-level project directory to the sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
@@ -14,6 +16,20 @@ from common.comms import request_service_with_response
 
 course_create_router = APIRouter()
 
+def extract_text_from_pdfs(files : List[UploadFile]):
+    text = ""
+    for file in files:
+        contents = file.file.read()
+
+        pdf_document = fitz.open(stream=io.BytesIO(contents), filetype="pdf")
+        text = ""
+        for page_num in range(len(pdf_document)):
+            page = pdf_document.load_page(page_num)
+            text += page.get_text()
+    
+    text = text.replace("\n", " ")
+    
+    return text
 
 '''
 HTTP POST /api/course_config/create/create_course_topics
@@ -59,8 +75,8 @@ async def create_course_material(
 
     ):
     try:
-        pdf_content = extract_text_from_pdfs(files)    
-        # pdf_content = files
+        pdf_content = extract_text_from_pdfs(files)
+
         data = {
             "action": "create_course_topics",
             "uid": uid,
@@ -84,18 +100,6 @@ async def create_course_material(
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-
-
-def extract_text_from_pdfs(pdf_paths):
-    extracted_text = {}
-    for pdf_path in pdf_paths:
-        pdf = PdfReader(pdf_path)
-        text = ''
-
-        for page in pdf.pages:
-            text += page.extract_text()
-        extracted_text[pdf_path] = text
-    return extracted_text
 
 '''
 HTTP POST /api/course_config/create/set_course_topics
