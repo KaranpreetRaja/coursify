@@ -15,9 +15,13 @@ export default function Chatbot({ context }) {
 
     const startChatSession = async () => {
         try {
-            const response = await axios.post('http://127.0.0.1:8000/start_session', { context });
+            const response = await axios.post('http://localhost:8000/api/chatbot/start_session', null, { 
+                params: {
+                    "context": "Machine learning"
+                }
+            }
+            );
             console.log("Start sesssion")
-            console.log(response.data)
             setChatSessionId(response.data.session_id);
         } catch (error) {
             console.error(error);
@@ -29,9 +33,11 @@ export default function Chatbot({ context }) {
             setMessages((prevMessages) => [...prevMessages, { text: input, sender: "user" }]);
 
             try {
-                const response = await axios.post('http://127.0.0.1:8000/use_session', {
-                    session_id: chatSessionId,
-                    question: input
+                const response = await axios.post('http://localhost:8000/api/chatbot/use_session', null, {
+                    params: {
+                        session_id: chatSessionId,
+                        question: input
+                    }
                 });
                 console.log("use sesssion")
                 console.log(response.data)
@@ -45,7 +51,7 @@ export default function Chatbot({ context }) {
                 ws.current.close();
             }
 
-            ws.current = new WebSocket(`ws://localhost:8000/ws?session_id=${chatSessionId}`);
+            ws.current = new WebSocket(`ws://localhost:8000/api/chatbot/ws?session_id=${chatSessionId}`);
 
             ws.current.onopen = () => {
                 ws.current.send(input);
