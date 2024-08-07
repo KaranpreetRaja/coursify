@@ -65,7 +65,11 @@ def handle_course_db_requests(data):
 
             course_data = []
             for course in courses:
-                course_data.append(course.to_dict())
+                # adds course document name to course data as "course_id"
+                course_data.append({
+                    "course_id": course.id,
+                    **course.to_dict()
+                })
 
             return {
                 "status": "success",
