@@ -4,10 +4,12 @@ export default function TopicSelection({ visibility, topics, selectedTopics, onT
 
     const handleSelection = (event) => {
         const { value, checked } = event.target;
+        const topic = JSON.parse(value);
+
         if (checked) {
-            onTopicChange([...selectedTopics, value]);
+            onTopicChange([...selectedTopics, topic]);
         } else {
-            onTopicChange(selectedTopics.filter(topic => topic !== value));
+            onTopicChange(selectedTopics.filter(selectedTopic => selectedTopic.topic !== topic.topic));
         }
     };
 
@@ -19,27 +21,26 @@ export default function TopicSelection({ visibility, topics, selectedTopics, onT
                 </div>
                 <div>
                     {topics.map((topic, index) => (
-                        <div className="checkbox-wrapper-4">
+                        <div className="checkbox-wrapper-4" key={index}>
                             <input
                                 type="checkbox"
                                 id={`topic-${index}`}
                                 name="creationOption"
-                                value={topic}
-                                checked={selectedTopics.includes(topic)}
+                                value={JSON.stringify(topic)}
+                                checked={selectedTopics.some(selectedTopic => selectedTopic.topic === topic.topic)}
                                 onChange={handleSelection}
                                 className="inp-cbx"
                             />
                             <label className="cbx" htmlFor={`topic-${index}`}>
                                 <span>
-                                    <svg width="12px" height="10px"></svg>
+                                    <svg width="12px" height="10px">
+                                        <symbol id="check-4" viewBox="0 0 12 10">
+                                            <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+                                        </symbol>
+                                    </svg>
                                 </span>
-                                <span>{topic}</span>
+                                <span>{topic.topic}</span>
                             </label>
-                            <svg className="inline-svg">
-                                <symbol id="check-4" viewBox="0 0 12 10">
-                                    <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
-                                </symbol>
-                            </svg>
                         </div>
                     ))}
                 </div>
