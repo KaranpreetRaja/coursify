@@ -13,7 +13,7 @@ from common.comms import start_consuming_service, request_service, request_servi
 
 
 def handle_course_db_requests(data):
-    print(f"Handling course db requests with action: {data['action']} and data: {data}")
+    print(f"Handling course db requests with action: {data['action']}")
 
     try:
         if data["action"] == "create_course":
@@ -22,10 +22,10 @@ def handle_course_db_requests(data):
                 "course_description": data["course_description"],
                 "course_author_uid": data["uid"],
                 "course_material": data["pdf_material"],
-                "course_topics": data["topics"]
+                # "course_topics": data["topics"]
             }
             course_ref = course_collection.add(course_data)
-            print(f"Course created: {course_ref}")
+            print(f"Course created with name: {data['course_name']} and id: {course_ref[1].id}") 
             course_id = course_ref[1].id
 
             return {
@@ -40,6 +40,8 @@ def handle_course_db_requests(data):
 
             course_ref = course_collection.document(course_id)
             course_ref.update({"lessons": lessons})
+
+            print(f"Lessons added to course with id: {course_id}")
 
             return {
                 "status": "success",
