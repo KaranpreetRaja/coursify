@@ -71,6 +71,7 @@ def create_lesson(topic, explanation):
 
 
 def generate_lesson(lesson_id: str, lesson_name: str, lesson_explanation: str) -> dict:
+    print("\n\n -------RUNNING NEW---------- \n\n")
     print(f"Ran generate_lesson() worker with lesson_id: {lesson_id}, lesson_name: {lesson_name}")
 
     # Stage 1: Generate lessons for each topic using the topic names and explinations
@@ -119,7 +120,7 @@ def handle_lesson_gen_requests(data):
         return
     
         
-executor = concurrent.futures.ProcessPoolExecutor(max_workers=1)
+executor = concurrent.futures.ProcessPoolExecutor(max_workers=4)
 
 def start_lesson_gen_consumer():
     start_consuming_service("lesson_gen", handle_lesson_gen_requests)
