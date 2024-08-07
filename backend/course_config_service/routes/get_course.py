@@ -196,6 +196,7 @@ async def get_quiz(
 
   
         response = request_service_with_response("lesson_db", payload)
+
         if response["status"] == "error":
             raise HTTPException(status_code=400, detail=f"Error getting quiz: {response['message']}")
 
