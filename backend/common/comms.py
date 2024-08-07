@@ -26,6 +26,7 @@ import pika
 import json
 import os
 from functools import partial
+from random import randint
 
 # Create a connection to RabbitMQ
 def create_connection():
@@ -52,7 +53,8 @@ def on_request(ch, method, properties, body, handle_request_func):
             properties=pika.BasicProperties(correlation_id=properties.correlation_id),
             body=json.dumps(response)
         )
-        ch.basic_ack(delivery_tag=method.delivery_tag)
+    
+    ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
 def start_consuming_service(queue_name, handle_request_func):
@@ -63,7 +65,13 @@ def start_consuming_service(queue_name, handle_request_func):
     on_request_partial = partial(on_request, handle_request_func=handle_request_func)
     channel.basic_consume(queue= queue_name, on_message_callback=on_request_partial)
     print("Consuming Service Starting")
-    channel.start_consuming()
+    try:
+        channel.start_consuming()
+    except KeyboardInterrupt:
+        channel.stop_consuming()
+    finally:
+        connection.close()
+
 
 
 
@@ -88,7 +96,8 @@ def receive_reply(connection, channel, reply_to):
         nonlocal response
         response = json.loads(body)
         print(response)
-        connection.close()
+        # stop consuming after receiving a response
+        ch.stop_consuming()
 
     channel.basic_consume(
         queue=reply_to,
@@ -100,17 +109,18 @@ def receive_reply(connection, channel, reply_to):
         try:
             connection.process_data_events(time_limit=1)
         except Exception as e:
-            print(f" Exception during processing data events: {e}")
+            print(f"RabbitMQ_comms: Exception during processing data events: {e}")
 
     return response
 
 def request_service_with_response(queue: str, data: dict) -> dict:
-    reply_to = f"{queue}_reply"
+    reply_to = f"{queue}_reply_{randint(0, 1000000)}"
     connection, channel = send_message(queue, data, reply_to)
-    return receive_reply(connection, channel, reply_to)
+    response = receive_reply(connection, channel, reply_to)
+    connection.close()
+    return response
 
 def request_service(queue: str, data: dict) -> None:
     connection, channel = send_message(queue, data, None)
     connection.close()
-    channel.close()
     return
