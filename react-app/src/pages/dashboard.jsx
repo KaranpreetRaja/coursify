@@ -23,40 +23,47 @@ export default function Dashboard() {
     useEffect(() => {
         const fetchCourses = async () => {
             try {
-                const response = await axios.get("/api/course_config/get/get_all_courses_user", { 
-                    uid,
-                    session_id                  
+                const response = await axios.get("http://localhost:8000/api/course_config/get/get_all_courses_user", { 
+                    params: {
+                        uid,
+                        session_id   
+                    }
                 });
-
-                if (response.data && response.data.courses) {
-                    setCourses(response.data.courses);
+                if (response.data) {
+                    const data = JSON.parse(response.data)
+                    console.log(data)
+                    setCourses(data);
                 }
             } catch (error) {
-                console.error(error.message);
+                console.error(error);
             }
         };
 
         fetchCourses();
     }, [uid, session_id]);
 
-    useEffect(() => {
-        const fetchTrendingCourses = async () => {
-            try {
-                const response = await axios.get("/api/course_config/get/get_all_courses_trending", { 
-                    uid,
-                    session_id                  
-                });
+    // useEffect(() => {
+    //     const fetchTrendingCourses = async () => {
+    //         try {
+    //             const response = await axios.get("http://localhost:8000/api/course_config/get/get_all_courses_trending", { 
+    //                 params: {
+    //                     uid,
+    //                     session_id   
+    //                 }               
+    //             });
 
-                if (response.data && response.data.courses) {
-                    setTrendingCourses(response.data.courses);
-                }
-            } catch (error) {
-                console.error(error.message);
-            }
-        };
+    //             if (response.data) {
+    //                 const data = JSON.parse(response.data)
+    //                 console.log(data)
+    //                 setTrendingCourses(response.data.courses);
+    //             }
+    //         } catch (error) {
+    //             console.error(error);
+    //         }
+    //     };
 
-        fetchTrendingCourses();
-    }, [uid, session_id]);
+    //     fetchTrendingCourses();
+    // }, [uid, session_id]);
 
     // useEffect(() => {
     //     const session_id = window.localStorage.getItem('session_id');
@@ -85,12 +92,6 @@ export default function Dashboard() {
                                 // courseDescription={course.course_description}
                             />
                         ))}
-                        <CourseCard courseName="EECS 3311" />
-                        <CourseCard courseName="Dinosaurs" />
-                        <CourseCard courseName="EECS 3311" />
-                        <CourseCard courseName="Dinosaurs" />
-                        <CourseCard courseName="EECS 3311" />
-                        <CourseCard courseName="Dinosaurs" />
                     </div>
                 </div>
 
