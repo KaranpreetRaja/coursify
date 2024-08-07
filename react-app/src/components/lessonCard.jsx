@@ -2,22 +2,25 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-export default function LessonCard({ lesson_id, lesson_name, lesson_description, course_id }) {
+export default function LessonCard({ lesson_id, lesson_name, lesson_description,  }) {
     const navigate = useNavigate();
     const uid = window.localStorage.getItem('uid');
     const session_id = window.localStorage.getItem('session_id');
     const [lessonLoaded, setLessonLoaded] = useState(false);
+    const course_id = "010"
 
     const checkLessonLoaded = async () => {
         try {
-            const response = await axios.get('/api/course_config/get/get_lesson_loaded', {
-                uid,
-                session_id,
-                course_id,
-                lesson_id
+            const response = await axios.get('http://localhost:8000/api/course_config/get/get_lesson_loaded', {
+                params: {
+                    uid,
+                    session_id,
+                    course_id,
+                    lesson_id
+                }
             });
 
-            if (response.data.lesson_loaded) {
+            if (response.data) {
                 setLessonLoaded(true);
             } else {
                 setTimeout(checkLessonLoaded, 3000);
