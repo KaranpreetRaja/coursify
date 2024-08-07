@@ -4,12 +4,13 @@ import { useParams } from "react-router-dom";
 import axios from 'axios';
 import Sidebar from '../components/sidebar';
 import LessonNavbar from '../components/lessonNavbar';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Quiz from '../components/quiz';
 import Chatbot from '../components/chatbot';
 
 export default function Lesson() {
     const { lesson_id, course_id } = useParams();
+    const navigate = useNavigate();
     const uid = window.localStorage.getItem('uid');
     const session_id = window.localStorage.getItem('session_id');
     const [lessonData, setLessonData] = useState({
@@ -37,9 +38,9 @@ export default function Lesson() {
                     setLessonData(JSON.parse(response.data));
                 }
 
-                if (!response.data.lesson_loaded) {
-                    timeoutId = setTimeout(fetchLesson, 3000);
-                }
+                // if (!response.data.lesson_loaded) {
+                //     timeoutId = setTimeout(fetchLesson, 3000);
+                // }
 
             } catch (error) {
                 console.error('Failed to fetch lesson:', error);
@@ -48,11 +49,11 @@ export default function Lesson() {
 
         fetchLesson();
 
-        return () => {
-            if (timeoutId) {
-                clearTimeout(timeoutId);
-            }
-        };
+        // return () => {
+        //     if (timeoutId) {
+        //         clearTimeout(timeoutId);
+        //     }
+        // };
     }, [uid, session_id, course_id, lesson_id]);
 
     return (
@@ -99,27 +100,23 @@ export default function Lesson() {
                                 <div className="animate-pulse bg-gray-300 w-full h-5 rounded-full"></div>
                             </div>
                         </div>
-                    )
-                    }
+                    )}
 
                     <div className="flex justify-between w-3/4 rounded-t-lg px-4 pb-4 mt-auto text-2xl">
-                        <Link
-                            to={lesson_id <= 1
-                                ? ''
-                                : `/course/${uid}/${course_id}/lesson/${Number(lesson_id) - 1}`}
+                        <button
+                            onClick={() => navigate(lesson_id <= 1 ? '' : `/course/${uid}/${course_id}/lesson/${Number(lesson_id)}`)}
                             className='flex justify-center items-center bg-blue-600 text-white px-6 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring focus:border-blue-300'>
                             Back
-                        </Link>
+                        </button>
                         <Quiz course_id={course_id} lesson_id={lesson_id} />        
-                        <Link
-                            to={`/course/${uid}/${course_id}/lesson/${Number(lesson_id) + 1}`}
+                        <button
+                            onClick={() => navigate(`/course/${uid}/${course_id}/lesson/${Number(lesson_id)}`)}
                             className="flex justify-center items-center bg-blue-800 text-white px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring focus:border-blue-300">
                             Next
-                        </Link>
+                        </button>
 
                         <Chatbot context={lessonData.lesson_material}/>
                     </div>
-
                 </div>
             </div>
         </div>
