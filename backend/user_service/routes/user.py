@@ -7,8 +7,10 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')
 from fastapi import APIRouter, HTTPException
 from common.comms import request_service_with_response
 import logging
+import httpx
 
-
+from dotenv import load_dotenv
+load_dotenv()
 user_router = APIRouter()
 
 '''
@@ -83,18 +85,45 @@ async def login_user(
     password: str
     ):
     try:
-        data = {
-            "action": "login_user",
-            "email": email,
-            "password": password
+        FIREBASE_WEB_API_KEY = os.getenv("FIREBASE_WEB_API_KEY")
+        async with httpx.AsyncClient() as client:
+            print(f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={FIREBASE_WEB_API_KEY}")
+            response = await client.post(
+                f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={FIREBASE_WEB_API_KEY}",
+                json={
+                    "email": email,
+                    "password": password,
+                    "returnSecureToken": True
+                }
+            )
+        
+        if response.status_code != 200:
+            raise HTTPException(status_code=400, detail=response.json()["error"]["message"])
+        
+        return {
+            "uid": response.json()["localId"],
+            "session_id": response.json()["idToken"],
+            **response.json()
         }
-        response = request_service_with_response("user_queue", data)
-
-        if response["status"] == "error":
-            raise HTTPException(status_code=400, detail=response["message"])
-        return response
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+
+
+
+    # try:
+    #     data = {
+    #         "action": "login_user",
+    #         "email": email,
+    #         "password": password
+    #     }
+    #     response = request_service_with_response("user_queue", data)
+
+    #     if response["status"] == "error":
+    #         raise HTTPException(status_code=400, detail=response["message"])
+    #     return response
+    # except Exception as e:
+    #     raise HTTPException(status_code=400, detail=str(e))
 
 '''
 HTTP POST /api/user/validate_session
