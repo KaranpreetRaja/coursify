@@ -17,7 +17,6 @@ Request Body:
 
     "course_id": "string",
 }
-
 Response Body:
 {
     "course_name": "string",
@@ -54,10 +53,11 @@ async def get_course(
 
         response = request_service_with_response("course_db", payload)
 
+        print(f"Response received: {response}")
         if response["status"] == "error":
             raise HTTPException(status_code=400, detail=response["message"])
 
-        return json.dump(response["course_data"])
+        return json.dumps(response["course_data"])
     
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -130,7 +130,7 @@ async def get_lesson(
         if response["status"] == "error":
             raise HTTPException(status_code=400, detail=response["message"])
 
-        return json.dump(response["lesson_data"])
+        return json.dumps(response["lesson_data"])
 
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -193,7 +193,7 @@ async def get_quiz(
         if response["status"] == "error":
             raise HTTPException(status_code=400, detail=response["message"])
 
-        return json.dump(response["quiz_data"])
+        return json.dumps(response["quiz_data"])
 
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e)) 
@@ -246,7 +246,7 @@ async def get_all_courses_user(
         if response["status"] == "error":
             raise HTTPException(status_code=400, detail=response["message"])
 
-        return json.dump(response["courses"])
+        return json.dumps(response["courses"])
     
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -335,7 +335,7 @@ async def get_lesson_loaded(
         if response["status"] == "error":
             raise HTTPException(status_code=400, detail=response["message"])
 
-        return json.dump(response["lesson_loaded"])
+        return json.dumps(response["lesson_loaded"])
     
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -382,7 +382,7 @@ async def get_quiz_loaded(
         if response["status"] == "error":
             raise HTTPException(status_code=400, detail=response["message"])
 
-        return json.dump(response["quiz_loaded"])
+        return json.dumps(response["quiz_loaded"])
     
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
