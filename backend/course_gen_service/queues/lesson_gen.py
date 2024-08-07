@@ -71,7 +71,8 @@ def create_lesson(topic, explanation):
 def generate_lesson(lesson_id: str, lesson_name: str, lesson_explanation: str) -> dict:
 
     # Stage 1: Generate lessons for each topic using the topic names and explinations
-    lesson_material = create_lesson(lesson_name, lesson_explanation)
+    response = create_lesson(lesson_name, lesson_explanation)
+    lesson_material = response.choices[0].message.content
     # Stage 2: add generated lesson to existing document by sending it to lesson_db_queue
     data = {
         "action": "add_material_to_lesson",
